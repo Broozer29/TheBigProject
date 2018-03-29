@@ -1,5 +1,6 @@
 package com.bruus.bigproject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -16,6 +17,8 @@ import processing.core.PApplet;
 import processing.core.PFont;
 
 public class TheBigProject extends PApplet {
+
+	private String baseFolder = new File("bin").getAbsolutePath();
 
 	ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	ArrayList<EnemyLanceKnights> allKnights;
@@ -38,7 +41,7 @@ public class TheBigProject extends PApplet {
 	public int tileSize = 50;
 	public float currentLevel;
 	public String currentZone = "Forest";
-	public boolean loadedMap;
+	private boolean loadedMap;
 
 	// Variables for Traders House and the Old Man
 	public float oldManX = 900;
@@ -67,7 +70,7 @@ public class TheBigProject extends PApplet {
 	public boolean action = false;
 
 	// Variables for the sound
-	public boolean playingMusic = false;
+	private boolean playingMusic = false;
 
 	// Variables for enemies
 	public long deathExplosionTimer = 0;
@@ -134,10 +137,10 @@ public class TheBigProject extends PApplet {
 	}
 
 	public void setup() {
-		// psionicFont = createFont("Georgia", 20);
-		// textFont = createFont("Georgia", 12);
+		psionicFont = createFont("Georgia", 20);
+		textFont = createFont("Georgia", 12);
 
-		loadedMap = false;
+		setLoadedMap(false);
 		resourceManager.loadImages(this);
 		resourceManager.loadMusic(this);
 
@@ -167,6 +170,37 @@ public class TheBigProject extends PApplet {
 
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Music
+	void playMusic() {
+		if (isPlayingMusic() == false) {
+			if (resourceManager.soundFile != null)
+				resourceManager.soundFile.stop();
+			if (currentZone == "Forest") {
+				resourceManager.soundFile = resourceManager.forestMusic;
+				setPlayingMusic(true);
+			}
+
+			if (currentZone == "Desert") {
+				resourceManager.soundFile = resourceManager.desertMusic;
+				setPlayingMusic(true);
+			}
+			if (currentZone == "TraderHouse") {
+				resourceManager.soundFile = resourceManager.traderHouseMusic;
+				setPlayingMusic(true);
+			}
+			resourceManager.soundFile.amp(0.5f);
+			resourceManager.soundFile.play();
+		}
+	}
+	// ---------------------------------------------------------------------------------------------------\\
+	// Enemies
+
+	// knightPosX, knightPosY, knightDirection, knightLife, knightMaxLife,
+	// knightMovementSpeed, maxPsionicEssence, actualPsionicEssence, alive,
+	// aggro, knightAttacking, knightAttackDone, knightDebuff, knightAnimation
+	// Float, Float, String, Float, Float, Float, Float, Float, Boolean,
+	// Boolean, Boolean, Boolean, String, Gif
 	void drawEnemies() {
 		for (EnemyLanceKnights temp : allKnights) {
 			temp.displayKnights();
@@ -184,33 +218,6 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
-	void playMusic() {
-		if (playingMusic == false && currentLevel < 2) {
-			resourceManager.soundFile = resourceManager.forestMusic;
-			resourceManager.soundFile.amp(0.5f);
-			resourceManager.soundFile.play();
-			playingMusic = true;
-		}
-
-		if (playingMusic == false && currentLevel < 20 && currentLevel >= 10) {
-			resourceManager.soundFile = resourceManager.desertMusic;
-			resourceManager.soundFile.amp(0.5f);
-			resourceManager.soundFile.play();
-			playingMusic = true;
-		}
-		if (playingMusic == false && currentLevel == 9000) {
-			resourceManager.soundFile = resourceManager.traderHouseMusic;
-			resourceManager.soundFile.amp(0.5f);
-			resourceManager.soundFile.play();
-			playingMusic = true;
-		}
-	}
-
-	// knightPosX, knightPosY, knightDirection, knightLife, knightMaxLife,
-	// knightMovementSpeed, maxPsionicEssence, actualPsionicEssence, alive,
-	// aggro, knightAttacking, knightAttackDone, knightDebuff, knightAnimation
-	// Float, Float, String, Float, Float, Float, Float, Float, Boolean,
-	// Boolean, Boolean, Boolean, String, Gif
 	void clearEnemies() {
 		allKnights.clear();
 		allPaladins.clear();
@@ -249,6 +256,9 @@ public class TheBigProject extends PApplet {
 		rect(posX, posY, knightLife / factor, 5);
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Character \\
+
 	void character() {
 		lookingDirection();
 		walking();
@@ -266,7 +276,7 @@ public class TheBigProject extends PApplet {
 		fill(0, 255, 0);
 		float factor = characterMaxHealth / 40;
 		rect(20, 20, (characterHealth / factor) * 10, 10);
-		// textFont(psionicFont);
+		textFont(psionicFont);
 
 		fill(0, 255, 255);
 		text("Psionic Essence: ", 20, 80);
@@ -405,6 +415,9 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Levels
+
 	void levels() {
 		leavingZone();
 		if (currentLevel == 0 && currentZone == "Forest") {
@@ -429,14 +442,14 @@ public class TheBigProject extends PApplet {
 			currentLevel++;
 			characterX = screenWidth;
 			clearEnemies();
-			loadedMap = false;
+			setLoadedMap(false);
 		}
 
 		if (characterX > screenWidth) {
 			currentLevel--;
 			characterX = 0;
 			clearEnemies();
-			loadedMap = false;
+			setLoadedMap(false);
 		}
 
 		if (characterY < 0) {
@@ -446,7 +459,7 @@ public class TheBigProject extends PApplet {
 			currentLevel++;
 			characterY = screenHeight;
 			clearEnemies();
-			loadedMap = false;
+			setLoadedMap(false);
 		}
 
 		if (characterY > screenHeight) {
@@ -456,30 +469,30 @@ public class TheBigProject extends PApplet {
 			currentLevel--;
 			characterY = 0;
 			clearEnemies();
-			loadedMap = false;
+			setLoadedMap(false);
 		}
 		if (enteredHouse == true) {
 			currentZone = "TraderHouse";
 			clearEnemies();
-			loadedMap = false;
+			setLoadedMap(false);
+			enteredHouse = false;
 		}
 	}
 
 	void starterZone() {
 		int locationTradeHouseX = 500;
 		int locationTradeHouseY = 0;
-		if (!loadedMap) {
+		if (!isLoadedMap()) {
 			resourceManager.soundFile.stop();
-			playingMusic = false;
+			setPlayingMusic(false);
 			createEnemies();
 			MapLoader loader = new MapLoader(this);
 			try {
-				objects = loader.loadTiles(
-						"/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/ForestZones/startingZone.txt");
+				objects = loader.loadTiles(baseFolder + "/ForestZones/startingZone.txt");
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			loadedMap = true;
+			setLoadedMap(true);
 		}
 		if (characterX / 50 == 12 && characterY / 50 == 6 && action == true) {
 			enteredHouse = true;
@@ -488,52 +501,49 @@ public class TheBigProject extends PApplet {
 	}
 
 	void forestZoneOne() {
-		if (!loadedMap) {
+		if (!isLoadedMap()) {
 			MapLoader loader = new MapLoader(this);
 			try {
-				objects = loader.loadTiles(
-						"/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/ForestZones/forestZoneOne.txt");
+				objects = loader.loadTiles(baseFolder + "/ForestZones/forestZoneOne.txt");
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
 			createEnemies();
-			loadedMap = true;
+			setLoadedMap(true);
 		}
 	}
 
 	void desertZoneOne() {
-		if (!loadedMap) {
+		if (!isLoadedMap()) {
 			resourceManager.soundFile.stop();
-			playingMusic = false;
+			setPlayingMusic(false);
 			MapLoader loader = new MapLoader(this);
 			try {
-				objects = loader.loadTiles(
-						"/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/DesertZones/DesertZoneOne.txt");
+				objects = loader.loadTiles(baseFolder + "/DesertZones/DesertZoneOne.txt");
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
 			createEnemies();
-			loadedMap = true;
+			setLoadedMap(true);
 		}
 	}
 
 	void traderHouse() {
 		float traderHouseDoorX = 1200;
 		float traderHouseDoorY = 300;
-		if (!loadedMap) {
-			resourceManager.soundFile.stop();
-			playingMusic = false;
+		if (!isLoadedMap()) {
+			// resourceManager.soundFile.stop();
+			setPlayingMusic(false);
 			MapLoader loader = new MapLoader(this);
 			try {
-				objects = loader.loadTiles(
-						"/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/ForestZones/traderHouse.txt");
+				objects = loader.loadTiles(baseFolder + "/ForestZones/traderHouse.txt");
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			loadedMap = true;
+			setLoadedMap(true);
 		}
 		if (characterX > traderHouseDoorX) {
-			loadedMap = false;
+			setLoadedMap(false);
 			currentZone = "Forest";
 			characterX = 600;
 			characterY = 300;
@@ -544,6 +554,8 @@ public class TheBigProject extends PApplet {
 		image(resourceManager.traderHouseDoor, traderHouseDoorX, traderHouseDoorY, 100, 150);
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Elements and damage
 	void elementalDamage() {
 		elementSelection();
 		damageCalculator();
@@ -646,6 +658,8 @@ public class TheBigProject extends PApplet {
 		waterElement = false;
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// mousePressed, responsible for multiple actions
 	public void mousePressed() {
 		// Chat gedeelte
 
@@ -771,6 +785,8 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Old man
 	void oldDude(float oldDudeX, float oldDudeY) {
 		if (characterXTile < oldManXMiddle) {
 			resourceManager.oldDudeImage = resourceManager.oldDudeLeft;
@@ -814,8 +830,11 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Text for the old man
+
 	void textChat(int chatBoxX, int chatBoxY) {
-		// textFont(textFont);
+		textFont(textFont);
 		int chatYStart = chatBoxY + 50;
 		String oldDudeText = "Hey there, if you are reading this, then the code has fucked up \nand whatever I wanted to say isn't actually going to be said. \nYou managed to break the game! Congratulations and fuck you!";
 		String currentText = allTexts(oldDudeText);
@@ -862,7 +881,7 @@ public class TheBigProject extends PApplet {
 		rect(prevChatX, nextChatY, 50, 50);
 		rect(extraChatX, nextChatY, 50, 50);
 		fill(0);
-		// textFont(textFont);
+		textFont(textFont);
 		text("Next", nextChatX - 10, nextChatY);
 		text("Previous", prevChatX - 23, nextChatY);
 		text("Extra", extraChatX - 10, nextChatY);
@@ -877,6 +896,9 @@ public class TheBigProject extends PApplet {
 			PApplet.main(appletArgs);
 		}
 	}
+
+	// ---------------------------------------------------------------------------------------------------\\
+	// Keypressed, responsible for multiple actions
 
 	public void keyPressed() {
 		int newX = characterX;
@@ -968,6 +990,8 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------\\
+	// Looking at which tile we are on
 	char getTileAt(int x, int y) {
 		char result = 'G';
 
@@ -1025,5 +1049,23 @@ public class TheBigProject extends PApplet {
 		}
 		return steppedOn;
 	}
+	// ---------------------------------------------------------------------------------------------------\\
 
+	public boolean isPlayingMusic() {
+		return playingMusic;
+	}
+
+	public void setPlayingMusic(boolean playingMusic) {
+		if (!playingMusic)
+			System.err.println();
+		this.playingMusic = playingMusic;
+	}
+
+	public boolean isLoadedMap() {
+		return loadedMap;
+	}
+
+	public void setLoadedMap(boolean loadedMap) {
+		this.loadedMap = loadedMap;
+	}
 }
