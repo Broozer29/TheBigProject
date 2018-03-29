@@ -6,6 +6,19 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.bruus.bigproject.gameobjects.Barrier;
+import com.bruus.bigproject.gameobjects.DesertGround;
+import com.bruus.bigproject.gameobjects.DesertStoneOne;
+import com.bruus.bigproject.gameobjects.DesertStoneThree;
+import com.bruus.bigproject.gameobjects.DesertStoneTwo;
+import com.bruus.bigproject.gameobjects.GameObject;
+import com.bruus.bigproject.gameobjects.Grass;
+import com.bruus.bigproject.gameobjects.Road;
+import com.bruus.bigproject.gameobjects.Trees;
+import com.bruus.bigproject.gameobjects.Water;
+import com.bruus.bigproject.gameobjects.hauntedForestGrass;
+import com.bruus.bigproject.gameobjects.traderHouseFloor;
+
 public class MapLoader { //<>//
 	TheBigProject theBigProject;
 	  public MapLoader(TheBigProject theBigProject) {

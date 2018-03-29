@@ -1,5 +1,7 @@
 package com.bruus.bigproject;
 
+import com.bruus.bigproject.gameobjects.GameObject;
+
 public class TileOverlap {
 	  GameObject theObject;
 	  int surface;

@@ -3,6 +3,8 @@ package com.bruus.bigproject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.bruus.bigproject.gameobjects.GameObject;
+
 import processing.core.PApplet;
 import processing.core.PFont;
 
@@ -27,8 +29,8 @@ public class TheBigProject extends PApplet {
 
 	// Map variables
 	int tileSize = 50;
-	float currentLevel;
-	String currentZone = "Forest";
+	public float currentLevel;
+	public String currentZone = "Forest";
 	boolean loadedMap;
 
 	// Variables for Traders House and the Old Man

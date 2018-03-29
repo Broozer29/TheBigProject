@@ -1,4 +1,6 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.gameobjects;
+
+import com.bruus.bigproject.TheBigProject;
 
 public class traderHouseFloor extends GameObject {
 	  public traderHouseFloor(TheBigProject mainApplet,int x, int y, int w, int h) {

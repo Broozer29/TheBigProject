@@ -1,4 +1,6 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.gameobjects;
+
+import com.bruus.bigproject.TheBigProject;
 
 import processing.core.PImage;
 
@@ -32,7 +34,7 @@ public class GameObject {
 	  //
 
 
-	  int overlap(int a1, int b1, int a2, int b2) {
+	  public int overlap(int a1, int b1, int a2, int b2) {
 	    int xOverlap1 = a1>=x1 && a1<=x2 ?x2 - a1:0;
 	    int xOverlap2 = a2>=x1 && a2<=x2 ?a2 - x1:0;
 
@@ -46,7 +48,7 @@ public class GameObject {
 	    return surface;
 	  }
 
-	  boolean contains(int a1, int b1, int a2, int b2) {
+	  public boolean contains(int a1, int b1, int a2, int b2) {
 	    boolean topLeftHit = a1 >= x1 && a1 <= x2 && b1 >= y1 && b1 <= y2;
 	    boolean topRightHit = a2 >= x1 && a2 <= x2 && b1 >= y1 && b1 <= y2;
 
@@ -55,7 +57,7 @@ public class GameObject {
 	    return  topLeftHit || topRightHit || bottomRightHit || bottomLeftHit;
 	  }
 
-	  void drawTerrain() {
+	  public void drawTerrain() {
 	    mainApplet.image(img, x1, y1, w, h);
 	  }
 	  public String coords() {
