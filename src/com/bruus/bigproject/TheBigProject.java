@@ -3,6 +3,8 @@ package com.bruus.bigproject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.bruus.bigproject.enemies.EnemyLanceKnights;
+import com.bruus.bigproject.enemies.EnemyPaladins;
 import com.bruus.bigproject.gameobjects.GameObject;
 
 import processing.core.PApplet;
@@ -19,107 +21,107 @@ public class TheBigProject extends PApplet {
 	int screenHeight;
 
 	// Character stats
-	int characterX;
-	int characterY;
-	float characterXTile;
-	float characterYTile;
-	float characterMaxHealth = 100;
-	float characterHealth = 100;
-	float playerPsionicEssence = 0;
+	public int characterX;
+	public int characterY;
+	public float characterXTile;
+	public float characterYTile;
+	public float characterMaxHealth = 100;
+	public float characterHealth = 100;
+	public float playerPsionicEssence = 0;
 
 	// Map variables
-	int tileSize = 50;
+	public int tileSize = 50;
 	public float currentLevel;
 	public String currentZone = "Forest";
-	boolean loadedMap;
+	public boolean loadedMap;
 
 	// Variables for Traders House and the Old Man
-	float oldManX = 900;
-	float oldManY = 300;
-	float oldManXMiddle = (oldManX + tileSize / 2) / 50;
-	float oldManYMiddle = (oldManY + tileSize * 2) / 50;
-	boolean enteredHouse = false;
+	public float oldManX = 900;
+	public float oldManY = 300;
+	public float oldManXMiddle = (oldManX + tileSize / 2) / 50;
+	public float oldManYMiddle = (oldManY + tileSize * 2) / 50;
+	public boolean enteredHouse = false;
 
 	// Settings for the chat
-	int extraChatX = 365;
-	int prevChatX = 440;
-	int nextChatX = 515;
-	int nextChatY = 765;
-	int currentText = 0;
-	String currentTextSetting = "Introduction";
-	boolean changeExtra = false;
+	public int extraChatX = 365;
+	public int prevChatX = 440;
+	public int nextChatX = 515;
+	public int nextChatY = 765;
+	public int currentText = 0;
+	public String currentTextSetting = "Introduction";
+	public boolean changeExtra = false;
 
 	// Variables for the main character
-	String walkingDirection = "left";
-	String prevWalkingDirection = "left";
-	boolean standingStill = true;
-	boolean swordAttack = false;
-	boolean bowAttack = false;
-	boolean loadElements = false;
-	boolean initialized = false;
-	boolean action = false;
+	public String walkingDirection = "left";
+	public String prevWalkingDirection = "left";
+	public boolean standingStill = true;
+	public boolean swordAttack = false;
+	public boolean bowAttack = false;
+	public boolean loadElements = false;
+	public boolean initialized = false;
+	public boolean action = false;
 
 	// Variables for the sound
-	boolean playingMusic = false;
+	public boolean playingMusic = false;
 
 	// Variables for enemies
-	long deathExplosionTimer = 0;
-	long attackUntil = 0;
-	long animationWait = 0;
-	long walkUntil = 0;
+	public long deathExplosionTimer = 0;
+	public long attackUntil = 0;
+	public long animationWait = 0;
+	public long walkUntil = 0;
 
 	// Variables for attacks
-	float attackDirection = 0;
-	float swordSize = 50;
-	String arrowDirection;
-	float arrowX = 0;
-	float arrowY = 0;
-	float oldCharacterX, oldCharacterY;
-	boolean arrowToFar = true;
-	boolean ableToAttack = true;
+	public float attackDirection = 0;
+	public float swordSize = 50;
+	public String arrowDirection;
+	public float arrowX = 0;
+	public float arrowY = 0;
+	public float oldCharacterX, oldCharacterY;
+	public boolean arrowToFar = true;
+	public boolean ableToAttack = true;
 
 	// Variables for text
-	PFont psionicFont;
-	PFont textFont;
+	public PFont psionicFont;
+	public PFont textFont;
 
-	float elementFireX = 155;
-	float elementLightX = 310;
-	float elementWaterX = 465;
-	float elementDarkX = 620;
-	float elementEarthX = 775;
-	float elementLightningX = 930;
-	float elementWindX = 1085;
-	float elementIceX = 1240;
+	public float elementFireX = 155;
+	public float elementLightX = 310;
+	public float elementWaterX = 465;
+	public float elementDarkX = 620;
+	public float elementEarthX = 775;
+	public float elementLightningX = 930;
+	public float elementWindX = 1085;
+	public float elementIceX = 1240;
 
-	float elementY = 100;
-	float elementResetX = 670;
-	float elementResetY = 700;
+	public float elementY = 100;
+	public float elementResetX = 670;
+	public float elementResetY = 700;
 
 	// elementImageFire, elementImageLight, elememtImageWater, elementImageDark,
 	// elementImageEarth, elementImageLightning, elementImageWind,
 	// elementImageIce;
 
 	// --------------------------------------------------------//
-	float swordDamage = 5;
-	float bowDamage = 50;
-	float burningDamage = 1;
-	long attackSpeed = 2200;
-	float lifeSteal = 10;
-	float windSpeed;
+	public float swordDamage = 5;
+	public float bowDamage = 50;
+	public float burningDamage = 1;
+	public long attackSpeed = 2200;
+	public float lifeSteal = 10;
+	public float windSpeed;
 	// --------------------------------------------------------//
 
-	String firstElement;
-	String secondElement;
+	public String firstElement;
+	public String secondElement;
 
-	boolean fireElement = false;
-	boolean iceElement = false;
-	boolean darkElement = false;
-	boolean lightElement = false;
-	boolean earthElement = false;
-	boolean windElement = false;
-	boolean waterElement = false;
-	boolean lightningElement = false;
-	boolean initializeDamage = false;
+	public boolean fireElement = false;
+	public boolean iceElement = false;
+	public boolean darkElement = false;
+	public boolean lightElement = false;
+	public boolean earthElement = false;
+	public boolean windElement = false;
+	public boolean waterElement = false;
+	public boolean lightningElement = false;
+	public boolean initializeDamage = false;
 
 	public void settings() {
 		size(1440, 900);
@@ -233,7 +235,7 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
-	void healthBar(float posX, float posY, float knightLife, float knightMaxLife) {
+	public void healthBar(float posX, float posY, float knightLife, float knightMaxLife) {
 		rectMode(CORNER);
 		float factor = knightMaxLife / 40;
 		fill(255, 0, 0);

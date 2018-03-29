@@ -1,4 +1,6 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.enemies;
+
+import com.bruus.bigproject.TheBigProject;
 
 import gifAnimation.Gif;
 
@@ -23,7 +25,7 @@ public class EnemyLanceKnights {
 
 	Gif knightAnimation;
 
-	EnemyLanceKnights(TheBigProject theBigProject, float knightPosX, float knightPosY, String knightDirection,
+	public EnemyLanceKnights(TheBigProject theBigProject, float knightPosX, float knightPosY, String knightDirection,
 			float knightLife, float knightMaxLife, float knightMovementSpeed, float maxPsionicEssence,
 			float actualPsionicEssence, boolean alive, boolean aggro, boolean knightAttacking, boolean knightAttackDone,
 			String knightDebuff, Gif knightAnimation) {
@@ -68,7 +70,7 @@ public class EnemyLanceKnights {
 		}
 	}
 
-	void displayKnights() {
+	public void displayKnights() {
 		if (this.knightLife > 0) {
 			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
 			this.knightAnimation.play();
@@ -156,7 +158,7 @@ public class EnemyLanceKnights {
 		}
 	}
 
-	void swordDamage(float attackDirection, float swordSize) {
+	public void swordDamage(float attackDirection, float swordSize) {
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.knightPosX, this.knightPosY) < swordSize) {
 			if (theBigProject.lightningElement == true) {
@@ -180,7 +182,7 @@ public class EnemyLanceKnights {
 		}
 	}
 
-	void bowDamage() {
+	public void bowDamage() {
 		if (TheBigProject.dist(theBigProject.arrowX, theBigProject.arrowY, this.knightPosX, this.knightPosY) < 50
 				&& theBigProject.arrowToFar == false) {
 			if (theBigProject.lightningElement == true) {

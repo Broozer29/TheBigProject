@@ -1,4 +1,6 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.enemies;
+
+import com.bruus.bigproject.TheBigProject;
 
 import gifAnimation.Gif;
 
@@ -24,7 +26,7 @@ public class EnemyPaladins {
 
 	Gif paladinAnimation;
 
-	EnemyPaladins(TheBigProject theBigProject, float paladinPosX, float paladinPosY, String paladinDirection,
+	public EnemyPaladins(TheBigProject theBigProject, float paladinPosX, float paladinPosY, String paladinDirection,
 			float paladinLife, float paladinMaxLife, float paladinMovementSpeed, float maxPsionicEssence,
 			float actualPsionicEssence, boolean alive, boolean aggro, boolean paladinAttacking,
 			boolean paladinAttackDone, String paladinDebuff, Gif paladinAnimation) {
@@ -70,7 +72,7 @@ public class EnemyPaladins {
 		}
 	}
 
-	void displayPaladins() {
+	public void displayPaladins() {
 		if (this.paladinLife > 0) {
 			this.paladinAnimation.play();
 			if (this.alive == true) {
@@ -150,7 +152,7 @@ public class EnemyPaladins {
 		}
 	}
 
-	void swordDamage(float attackDirection, float swordSize) {
+	public void swordDamage(float attackDirection, float swordSize) {
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.paladinPosX, this.paladinPosY) < swordSize) {
 			if (theBigProject.lightningElement == true) {
@@ -174,7 +176,7 @@ public class EnemyPaladins {
 		}
 	}
 
-	void bowDamage() {
+	public void bowDamage() {
 		if (TheBigProject.dist(theBigProject.arrowX, theBigProject.arrowY, this.paladinPosX, this.paladinPosY) < 50
 				&& theBigProject.arrowToFar == false) {
 			this.paladinLife -= theBigProject.bowDamage;
