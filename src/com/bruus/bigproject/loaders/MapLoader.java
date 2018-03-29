@@ -1,4 +1,4 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.loaders;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.bruus.bigproject.TheBigProject;
 import com.bruus.bigproject.gameobjects.Barrier;
 import com.bruus.bigproject.gameobjects.DesertGround;
 import com.bruus.bigproject.gameobjects.DesertStoneOne;

@@ -1,4 +1,4 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.util;
 
 import java.util.Comparator;
 

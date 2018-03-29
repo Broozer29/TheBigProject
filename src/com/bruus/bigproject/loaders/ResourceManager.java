@@ -1,4 +1,4 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.loaders;
 
 import gifAnimation.Gif;
 import processing.core.PApplet;
@@ -20,7 +20,7 @@ public class ResourceManager {
 	public PImage arrowLeft, arrowRight;
 	public PImage elementImageFire, elementImageLight, elememtImageWater, elementImageDark, elementImageEarth, elementImageLightning, elementImageWind, elementImageIce, elementImageReset, elementSelectedImage;
 
-	void loadImages(PApplet myApplet) {
+	public void loadImages(PApplet myApplet) {
 	  // Character //
 	  walkingRight = new Gif(myApplet, "/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/Saber?/SaberGifs/SaberWalkingRight.gif");
 	  walkingLeft = new Gif(myApplet, "/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/Saber?/SaberGifs/SaberWalkingLeft.gif");
@@ -108,7 +108,7 @@ public class ResourceManager {
 	}
 	
 
-	void loadMusic(PApplet myApplet) {
+	public void loadMusic(PApplet myApplet) {
 	  forestMusic = new SoundFile(myApplet, "/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/Music_Folder/NieRForest.mp3");
 	  squareMusic = new SoundFile(myApplet, "/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/Music_Folder/ProleteR - Faidherbe square.mp3");
 	  desertMusic = new SoundFile(myApplet, "/Users/bruusriezebos/Documents/Processing/TheBigProject_0_3/Music_Folder/NieR Automata OST - Great Desert.mp3");

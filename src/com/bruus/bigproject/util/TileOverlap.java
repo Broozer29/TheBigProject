@@ -1,4 +1,4 @@
-package com.bruus.bigproject;
+package com.bruus.bigproject.util;
 
 import com.bruus.bigproject.gameobjects.GameObject;
 
@@ -6,7 +6,7 @@ public class TileOverlap {
 	  GameObject theObject;
 	  int surface;
 
-	  TileOverlap(GameObject o, int s) {
+	  public TileOverlap(GameObject o, int s) {
 	    theObject = o;
 	    surface = s;
 	  }

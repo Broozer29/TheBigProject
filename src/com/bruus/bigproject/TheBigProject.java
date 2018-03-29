@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import com.bruus.bigproject.enemies.EnemyLanceKnights;
 import com.bruus.bigproject.enemies.EnemyPaladins;
 import com.bruus.bigproject.gameobjects.GameObject;
+import com.bruus.bigproject.loaders.MapLoader;
+import com.bruus.bigproject.loaders.ResourceManager;
+import com.bruus.bigproject.util.TileOverlap;
+import com.bruus.bigproject.util.TileOverlapSurfaceComparator;
+import com.bruus.bigproject.util.TileOverlapTypeComparator;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -872,153 +877,153 @@ public class TheBigProject extends PApplet {
 			PApplet.main(appletArgs);
 		}
 	}
+
 	public void keyPressed() {
-		  int newX = characterX;
-		  int newY = characterY;
+		int newX = characterX;
+		int newY = characterY;
 
-
-		  if (key == 'a' && ableToAttack == true) {
-		    action = false; 
-		    swordAttack = true;
-		    standingStill = false;
-		    ableToAttack = false;
-		    attackUntil = millis() + attackSpeed;
-		  }
-
-		  if (key == 'd' && ableToAttack == true) {
-		    action = false; 
-		    ableToAttack = false;
-		    bowAttack = true;
-		    standingStill = false;
-		    oldCharacterX = characterX;
-		    oldCharacterY = characterY;
-		    attackUntil = millis() + 1000;
-		    if (arrowToFar == true) {
-		      arrowToFar = false;
-		    }
-		  }
-		  if (key == 'c') {
-		    action = false; 
-		    if (loadElements == true) {
-		      loadElements = false;
-		    } else if (loadElements == false) {
-		      loadElements = true;
-		    }
-		  }
-		  if (key == 'x') {
-		    if (action != true) {
-		      action = true;
-		    } else if (action == true) {
-		      action = false;
-		    }
-		  }
-
-
-		  if (key == CODED) {
-		    if (swordAttack == false && bowAttack == false) {
-		      if (keyCode == UP) {
-		        action = false; 
-		        newY -= 10;
-		        walkUntil = millis() + 1000;
-		        walkingDirection = "up";
-		        standingStill = false;
-		      }
-		      if (keyCode == DOWN) {
-		        action = false; 
-		        newY += 10;
-		        walkUntil = millis() + 1000;
-		        walkingDirection = "down";
-		        standingStill = false;
-		      }
-		      if (keyCode == LEFT) {
-		        action = false; 
-		        newX -= 10;
-		        walkUntil = millis() + 1000;
-		        walkingDirection = "left";
-		        prevWalkingDirection = "left";
-		        standingStill = false;
-		      }
-		      if (keyCode == RIGHT) {
-		        action = false; 
-		        newX += 10;
-		        walkUntil = millis() + 1000;
-		        walkingDirection = "right";
-		        prevWalkingDirection = "right";
-		        standingStill = false;
-		      }
-		    }
-
-		    ArrayList<TileOverlap> steppedOn = determineSteppedOn(newX, newY);
-		    boolean validTile = true;
-		    for (TileOverlap overlap : steppedOn) {
-		      if (overlap.getSurface() > 0) {
-		        if (overlap.getType()=='W' || overlap.getType() == 'T' || overlap.getType() == 'a' || overlap.getType() == 'b' || overlap.getType() == 'c' || overlap.getType() == 'B') validTile = false;
-		      }
-		    }
-		    if (validTile) {
-		      characterX = newX;
-		      characterY = newY;
-		    }
-		  }
+		if (key == 'a' && ableToAttack == true) {
+			action = false;
+			swordAttack = true;
+			standingStill = false;
+			ableToAttack = false;
+			attackUntil = millis() + attackSpeed;
 		}
 
-
-		char getTileAt(int x, int y) {
-		  char result = 'G';
-
-		  // Collect objects we are on
-		  ArrayList<TileOverlap> steppedOn = determineSteppedOn(x, y);
-		  println("-----------------");
-		  println("Stepped: " + steppedOn);
-
-
-
-		  // First compact the list by type (sum the surfaces for the same types)
-		  // Sort the list by type:
-		  steppedOn.sort(new TileOverlapTypeComparator());
-		  ArrayList<TileOverlap> compacted = new ArrayList<TileOverlap>();
-
-		  TileOverlap previous = null;
-		  for (TileOverlap overLap : steppedOn) {
-		    // First we ever see?
-		    if (previous == null) { 
-		      compacted.add(overLap);
-		      previous = overLap;
-		    } else 
-		    // There was a prev one; let's see if the new one is of the same type. If so: ignore the new one and sum
-		    if (previous.getType() ==  overLap.getType()) {
-		      previous.addSurface( overLap.getSurface());
-		    } else {
-		      // We have encountered a new type; add it to the list; make sure we update previous
-		      compacted.add(overLap);
-		      previous = overLap;
-		    }
-		  }
-		  println("Compacted: " + compacted);
-
-		  compacted.sort(new TileOverlapSurfaceComparator());
-
-		  println("Stepped sorted by surface: " + compacted);
-		  if (!compacted.isEmpty()) {
-
-		    TileOverlap tile = ((TileOverlap)compacted.get(0));
-		    if (tile.getSurface() > 0) {
-		      println("You are on " +  tile.getType());
-		      result = tile.getType();
-		    }
-		  }
-		  return result;
+		if (key == 'd' && ableToAttack == true) {
+			action = false;
+			ableToAttack = false;
+			bowAttack = true;
+			standingStill = false;
+			oldCharacterX = characterX;
+			oldCharacterY = characterY;
+			attackUntil = millis() + 1000;
+			if (arrowToFar == true) {
+				arrowToFar = false;
+			}
+		}
+		if (key == 'c') {
+			action = false;
+			if (loadElements == true) {
+				loadElements = false;
+			} else if (loadElements == false) {
+				loadElements = true;
+			}
+		}
+		if (key == 'x') {
+			if (action != true) {
+				action = true;
+			} else if (action == true) {
+				action = false;
+			}
 		}
 
-		public ArrayList<TileOverlap> determineSteppedOn(int x, int y) {
-		  ArrayList<TileOverlap> steppedOn = new ArrayList<TileOverlap>();
+		if (key == CODED) {
+			if (swordAttack == false && bowAttack == false) {
+				if (keyCode == UP) {
+					action = false;
+					newY -= 10;
+					walkUntil = millis() + 1000;
+					walkingDirection = "up";
+					standingStill = false;
+				}
+				if (keyCode == DOWN) {
+					action = false;
+					newY += 10;
+					walkUntil = millis() + 1000;
+					walkingDirection = "down";
+					standingStill = false;
+				}
+				if (keyCode == LEFT) {
+					action = false;
+					newX -= 10;
+					walkUntil = millis() + 1000;
+					walkingDirection = "left";
+					prevWalkingDirection = "left";
+					standingStill = false;
+				}
+				if (keyCode == RIGHT) {
+					action = false;
+					newX += 10;
+					walkUntil = millis() + 1000;
+					walkingDirection = "right";
+					prevWalkingDirection = "right";
+					standingStill = false;
+				}
+			}
 
-		  for (GameObject o : objects) {
-		    if (o.contains(x, y, x+50, y+50)) {
-		      steppedOn.add(new TileOverlap(o, o.overlap(x, y, x+50, y+50)));
-		    }
-		  }
-		  return steppedOn;
+			ArrayList<TileOverlap> steppedOn = determineSteppedOn(newX, newY);
+			boolean validTile = true;
+			for (TileOverlap overlap : steppedOn) {
+				if (overlap.getSurface() > 0) {
+					if (overlap.getType() == 'W' || overlap.getType() == 'T' || overlap.getType() == 'a'
+							|| overlap.getType() == 'b' || overlap.getType() == 'c' || overlap.getType() == 'B')
+						validTile = false;
+				}
+			}
+			if (validTile) {
+				characterX = newX;
+				characterY = newY;
+			}
 		}
+	}
+
+	char getTileAt(int x, int y) {
+		char result = 'G';
+
+		// Collect objects we are on
+		ArrayList<TileOverlap> steppedOn = determineSteppedOn(x, y);
+		println("-----------------");
+		println("Stepped: " + steppedOn);
+
+		// First compact the list by type (sum the surfaces for the same types)
+		// Sort the list by type:
+		steppedOn.sort(new TileOverlapTypeComparator());
+		ArrayList<TileOverlap> compacted = new ArrayList<TileOverlap>();
+
+		TileOverlap previous = null;
+		for (TileOverlap overLap : steppedOn) {
+			// First we ever see?
+			if (previous == null) {
+				compacted.add(overLap);
+				previous = overLap;
+			} else
+			// There was a prev one; let's see if the new one is of the same
+			// type. If so: ignore the new one and sum
+			if (previous.getType() == overLap.getType()) {
+				previous.addSurface(overLap.getSurface());
+			} else {
+				// We have encountered a new type; add it to the list; make sure
+				// we update previous
+				compacted.add(overLap);
+				previous = overLap;
+			}
+		}
+		println("Compacted: " + compacted);
+
+		compacted.sort(new TileOverlapSurfaceComparator());
+
+		println("Stepped sorted by surface: " + compacted);
+		if (!compacted.isEmpty()) {
+
+			TileOverlap tile = ((TileOverlap) compacted.get(0));
+			if (tile.getSurface() > 0) {
+				println("You are on " + tile.getType());
+				result = tile.getType();
+			}
+		}
+		return result;
+	}
+
+	public ArrayList<TileOverlap> determineSteppedOn(int x, int y) {
+		ArrayList<TileOverlap> steppedOn = new ArrayList<TileOverlap>();
+
+		for (GameObject o : objects) {
+			if (o.contains(x, y, x + 50, y + 50)) {
+				steppedOn.add(new TileOverlap(o, o.overlap(x, y, x + 50, y + 50)));
+			}
+		}
+		return steppedOn;
+	}
 
 }
