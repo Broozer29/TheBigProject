@@ -74,6 +74,7 @@ public class EnemyPaladins {
 
 	public void displayPaladins() {
 		if (this.paladinLife > 0) {
+			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
 			this.paladinAnimation.play();
 			if (this.alive == true) {
 				theBigProject.healthBar(this.paladinPosX, this.paladinPosY, this.paladinLife, this.paladinMaxLife);
@@ -142,6 +143,13 @@ public class EnemyPaladins {
 			this.alive = false;
 			if (theBigProject.deathExplosionTimer < theBigProject.millis()) {
 				this.paladinAnimation = theBigProject.resourceManager.chestClosed;
+			}
+			if (TheBigProject.dist(theBigProject.characterX, theBigProject.characterY, this.paladinPosX,
+					this.paladinPosY) < 50 && this.paladinAnimation == theBigProject.resourceManager.chestClosed
+					&& theBigProject.action == true) {
+				this.paladinAnimation = theBigProject.resourceManager.chestOpen;
+				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
+				this.actualPsionicEssence = 0;
 			}
 		}
 

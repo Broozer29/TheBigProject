@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import com.bruus.bigproject.enemies.EnemyLanceKnights;
 import com.bruus.bigproject.enemies.EnemyPaladins;
+import com.bruus.bigproject.enemies.EnemySkeletons;
 import com.bruus.bigproject.gameobjects.GameObject;
 import com.bruus.bigproject.loaders.MapLoader;
 import com.bruus.bigproject.loaders.ResourceManager;
@@ -23,6 +24,7 @@ public class TheBigProject extends PApplet {
 	ArrayList<GameObject> objects = new ArrayList<GameObject>();
 	ArrayList<EnemyLanceKnights> allKnights;
 	ArrayList<EnemyPaladins> allPaladins;
+	ArrayList<EnemySkeletons> allSkeletons;
 
 	public ResourceManager resourceManager = new ResourceManager();
 	int screenWidth;
@@ -49,10 +51,12 @@ public class TheBigProject extends PApplet {
 	public float oldManXMiddle = (oldManX + tileSize / 2) / 50;
 	public float oldManYMiddle = (oldManY + tileSize * 2) / 50;
 	public boolean enteredHouse = false;
+	public boolean openShop = false;
 
 	// Settings for the chat
 	public int extraChatX = 365;
 	public int prevChatX = 440;
+	public int shopChatX = 600;
 	public int nextChatX = 515;
 	public int nextChatY = 765;
 	public int currentText = 0;
@@ -121,6 +125,15 @@ public class TheBigProject extends PApplet {
 	public String firstElement;
 	public String secondElement;
 
+	public boolean fireUnlocked = true;
+	public boolean iceUnlocked = false;
+	public boolean darkUnlocked = false;
+	public boolean lightUnlocked = false;
+	public boolean earthUnlocked = false;
+	public boolean windUnlocked = false;
+	public boolean waterUnlocked = false;
+	public boolean lightningUnlocked = false;
+
 	public boolean fireElement = false;
 	public boolean iceElement = false;
 	public boolean darkElement = false;
@@ -137,19 +150,21 @@ public class TheBigProject extends PApplet {
 	}
 
 	public void setup() {
+		allKnights = new ArrayList<>();
+		allPaladins = new ArrayList<>();
+		allSkeletons = new ArrayList<>();
 		psionicFont = createFont("Georgia", 20);
 		textFont = createFont("Georgia", 12);
 
 		setLoadedMap(false);
 		resourceManager.loadImages(this);
 		resourceManager.loadMusic(this);
-
 		screenWidth = width;
 		screenHeight = height;
 		characterX = screenWidth / 2;
 		characterY = screenHeight / 2;
 		currentLevel = 0;
-		frameRate(60);
+		frameRate(20);
 
 	}
 
@@ -167,7 +182,6 @@ public class TheBigProject extends PApplet {
 		elementalDamage();
 		character();
 		drawEnemies();
-
 	}
 
 	// ---------------------------------------------------------------------------------------------------\\
@@ -196,11 +210,6 @@ public class TheBigProject extends PApplet {
 	// ---------------------------------------------------------------------------------------------------\\
 	// Enemies
 
-	// knightPosX, knightPosY, knightDirection, knightLife, knightMaxLife,
-	// knightMovementSpeed, maxPsionicEssence, actualPsionicEssence, alive,
-	// aggro, knightAttacking, knightAttackDone, knightDebuff, knightAnimation
-	// Float, Float, String, Float, Float, Float, Float, Float, Boolean,
-	// Boolean, Boolean, Boolean, String, Gif
 	void drawEnemies() {
 		for (EnemyLanceKnights temp : allKnights) {
 			temp.displayKnights();
@@ -216,26 +225,49 @@ public class TheBigProject extends PApplet {
 				temp.swordDamage(attackDirection, swordSize);
 			}
 		}
+		if (currentZone == "Desert") {
+			for (EnemySkeletons temp : allSkeletons) {
+				temp.displayskeletons();
+				temp.bowDamage();
+				if (swordAttack == true) {
+					temp.swordDamage(attackDirection, swordSize);
+				}
+			}
+		}
 	}
 
 	void clearEnemies() {
-		allKnights.clear();
-		allPaladins.clear();
+		if (allKnights.size() > 0) {
+			allKnights.clear();
+		}
+		if (allPaladins.size() > 0) {
+			allPaladins.clear();
+		}
+
+		if (allSkeletons.size() > 0) {
+			allSkeletons.clear();
+		}
+
 	}
+
+	// PosX, PosY, Direction, Life, MaxLife, MovementSpeed, maxPsionicEssence,
+	// actualPsionicEssence,
+	// alive, aggro, Attacking, AttackDone, Debuff, Animation
+	// Float, Float, String, Float, Float, Float, Float, Float, Boolean,
+	// Boolean, Boolean, Boolean, String, Gif
 
 	void createEnemies() {
 		if (currentLevel == 0 && currentZone == "Forest") {
-			allKnights = new ArrayList<>();
-			allPaladins = new ArrayList<>();
-			EnemyLanceKnights firstKnight = new EnemyLanceKnights(this, 600, 600, "Right", 200, 200, 5, 50, 0, true,
+			EnemyLanceKnights firstKnight = new EnemyLanceKnights(this, 600, 600, "Right", 200, 200, 2, 50, 0, true,
 					false, false, true, "", resourceManager.lanceKnightRightIdle);
 			allKnights.add(firstKnight);
-			EnemyLanceKnights secondKnight = new EnemyLanceKnights(this, 500, 500, "Right", 100, 100, 5, 50, 0, true,
+			EnemyLanceKnights secondKnight = new EnemyLanceKnights(this, 500, 500, "Right", 100, 100, 2, 50, 0, true,
 					false, false, true, "", resourceManager.lanceKnightRightIdle);
 			allKnights.add(secondKnight);
-			EnemyLanceKnights thirdKnight = new EnemyLanceKnights(this, 400, 400, "Right", 300, 300, 5, 50, 0, true,
+			EnemyLanceKnights thirdKnight = new EnemyLanceKnights(this, 400, 400, "Right", 300, 300, 2, 50, 0, true,
 					false, false, true, "", resourceManager.lanceKnightRightIdle);
 			allKnights.add(thirdKnight);
+
 			EnemyPaladins firstPaladin = new EnemyPaladins(this, 800, 600, "Right", 200, 200, 5, 100, 0, true, false,
 					false, true, "", resourceManager.paladinRightIdle);
 			allPaladins.add(firstPaladin);
@@ -244,6 +276,12 @@ public class TheBigProject extends PApplet {
 			EnemyLanceKnights firstKnight = new EnemyLanceKnights(this, 200, 200, "Right", 100, 100, 5, 50, 0, true,
 					false, false, false, "", resourceManager.lanceKnightRightIdle);
 			allKnights.add(firstKnight);
+		}
+		if (currentLevel == 1 && currentZone == "Desert") {
+			allSkeletons = new ArrayList<>();
+			EnemySkeletons firstSkeleton = new EnemySkeletons(this, 200, 200, "Right", 100, 100, 4, 50, 0, true, false,
+					false, false, "", resourceManager.lanceKnightRightIdle);
+			allSkeletons.add(firstSkeleton);
 		}
 	}
 
@@ -360,10 +398,6 @@ public class TheBigProject extends PApplet {
 	}
 
 	void bowAttack() {
-		if (arrowToFar == false) {
-			image(resourceManager.projectileSaber, arrowX, arrowY);
-		}
-
 		int bowAttackDirectionLeft = 20;
 		int bowAttackDirectionRight = 70;
 
@@ -403,6 +437,9 @@ public class TheBigProject extends PApplet {
 		}
 		if (arrowX < oldCharacterX - 500 || arrowX > oldCharacterX + 500) {
 			arrowToFar = true;
+		}
+		if (arrowToFar == false) {
+			image(resourceManager.projectileSaber, arrowX, arrowY);
 		}
 		resourceManager.projectileSaber.play();
 	}
@@ -607,15 +644,32 @@ public class TheBigProject extends PApplet {
 
 	void elementSelection() {
 		if (loadElements == true) {
-			image(resourceManager.elementImageFire, elementFireX, elementY);
-			image(resourceManager.elementImageIce, elementIceX, elementY);
-			image(resourceManager.elementImageLight, elementLightX, elementY);
-			image(resourceManager.elememtImageWater, elementWaterX, elementY);
-			image(resourceManager.elementImageDark, elementDarkX, elementY);
-			image(resourceManager.elementImageEarth, elementEarthX, elementY);
-			image(resourceManager.elementImageWind, elementWindX, elementY);
-			image(resourceManager.elementImageLightning, elementLightningX, elementY);
-			image(resourceManager.elementImageReset, elementResetX, elementResetY);
+			if (fireUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageFire, elementFireX, elementY);
+			}
+			if (iceUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageIce, elementIceX, elementY);
+			}
+			if (lightUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageLight, elementLightX, elementY);
+			}
+			if (waterUnlocked == true || openShop == true) {
+				image(resourceManager.elememtImageWater, elementWaterX, elementY);
+			}
+			if (darkUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageDark, elementDarkX, elementY);
+			}
+			if (earthUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageEarth, elementEarthX, elementY);
+			}
+			if (windUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageWind, elementWindX, elementY);
+			}
+			if (lightningUnlocked == true || openShop == true) {
+				image(resourceManager.elementImageLightning, elementLightningX, elementY);
+			}
+			if (openShop == false)
+				image(resourceManager.elementImageReset, elementResetX, elementResetY);
 
 			if (earthElement == true) {
 				image(resourceManager.elementSelectedImage, elementEarthX, elementY, 100, 100);
@@ -662,11 +716,16 @@ public class TheBigProject extends PApplet {
 	// mousePressed, responsible for multiple actions
 	public void mousePressed() {
 		// Chat gedeelte
+		if (dist(mouseX, mouseY, shopChatX, nextChatY) < 50 && action == true) {
+			openShop = true;
+		}
 
 		if (dist(mouseX, mouseY, nextChatX, nextChatY) < 50 && action == true) {
-			currentText++;
-			if (currentText == 4 && currentTextSetting == "Introduction") {
-				currentText = 0;
+			if (currentText != 8 && currentTextSetting == "Introduction") {
+				currentText++;
+			}
+			if (currentText != 4 && currentTextSetting == "ElementExplanation") {
+				currentText++;
 			}
 		}
 		if (dist(mouseX, mouseY, prevChatX, nextChatY) < 50 && action == true) {
@@ -688,94 +747,137 @@ public class TheBigProject extends PApplet {
 				changeExtra = false;
 			}
 		}
-
+		// public boolean fireUnlocked = true;
+		// public boolean iceUnlocked = false;
+		// public boolean darkUnlocked = false;
+		// public boolean lightUnlocked = false;
+		// public boolean earthUnlocked = false;
+		// public boolean windUnlocked = false;
+		// public boolean waterUnlocked = false;
+		// public boolean lightningUnlocked = false;
+		//
+		// Elements gedeelte
 		if (loadElements == true) {
 			if (dist(mouseX, mouseY, elementFireX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Fire") {
+				if (openShop == true && action == true && fireUnlocked == false) {
+					fireUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Fire" && openShop == false && fireUnlocked == true) {
 					firstElement = "Fire";
 					initializeDamage = true;
 				}
-				if (firstElement != null && firstElement != "Fire" && secondElement == null
-						&& secondElement != "Fire") {
+
+				if (firstElement != null && firstElement != "Fire" && secondElement == null && secondElement != "Fire"
+						&& openShop == false && fireUnlocked == true) {
 					secondElement = "Fire";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementIceX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Ice") {
+				if (openShop == true && action == true && iceUnlocked == false) {
+					iceUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Ice" && openShop == false && iceUnlocked == true) {
 					firstElement = "Ice";
 					initializeDamage = true;
 				}
-				if (firstElement != null && firstElement != "Ice" && secondElement == null && secondElement != "Ice") {
+				if (firstElement != null && firstElement != "Ice" && secondElement == null && secondElement != "Ice"
+						&& openShop == false && iceUnlocked == true) {
 					secondElement = "Ice";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementLightX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Light") {
+				if (openShop == true && action == true && lightUnlocked == false) {
+					lightUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Light" && openShop == false && lightUnlocked == true) {
 					firstElement = "Light";
 					initializeDamage = true;
 				}
-				if (firstElement != null && firstElement != "Light" && secondElement == null
-						&& secondElement != "Light") {
+				if (firstElement != null && firstElement != "Light" && secondElement == null && secondElement != "Light"
+						&& openShop == false && lightUnlocked == true) {
 					secondElement = "Light";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementWaterX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Water") {
+				if (openShop == true && action == true && waterUnlocked == false) {
+					waterUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Water" && openShop == false && waterUnlocked == true) {
 					firstElement = "Water";
 					initializeDamage = true;
 				} else if (firstElement != null && firstElement != "Water" && secondElement == null
-						&& secondElement != "Water") {
+						&& secondElement != "Water" && openShop == false && waterUnlocked == true) {
 					secondElement = "Water";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementDarkX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Dark") {
+				if (openShop == true && action == true && darkUnlocked == false) {
+					darkUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Dark" && openShop == false && darkUnlocked == true) {
 					firstElement = "Dark";
 					initializeDamage = true;
 				}
-				if (firstElement != null && firstElement != "Dark" && secondElement == null
-						&& secondElement != "Dark") {
+				if (firstElement != null && firstElement != "Dark" && secondElement == null && secondElement != "Dark"
+						&& openShop == false && darkUnlocked == true) {
 					secondElement = "Dark";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementEarthX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Earth") {
+				if (openShop == true && action == true && earthUnlocked == false) {
+					earthUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Earth" && openShop == false && earthUnlocked == true) {
 					firstElement = "Earth";
 					initializeDamage = true;
 				}
-				if (firstElement != null && firstElement != "Earth" && secondElement == null
-						&& secondElement != "Earth") {
+				if (firstElement != null && firstElement != "Earth" && secondElement == null && secondElement != "Earth"
+						&& openShop == false && earthUnlocked == true) {
 					secondElement = "Earth";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementWindX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Wind") {
+				if (openShop == true && action == true && windUnlocked == false) {
+					windUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Wind" && openShop == false && windUnlocked == true) {
 					firstElement = "Wind";
 					initializeDamage = true;
 				}
-				if (firstElement != null && firstElement != "Wind" && secondElement == null
-						&& secondElement != "Wind") {
+				if (firstElement != null && firstElement != "Wind" && secondElement == null && secondElement != "Wind"
+						&& openShop == false && windUnlocked == true) {
 					secondElement = "Wind";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementLightningX + tileSize, elementY + tileSize) < tileSize) {
-				if (firstElement == null && firstElement != "Lightning") {
+				if (openShop == true && action == true && lightningUnlocked == false) {
+					lightningUnlocked = true;
+				}
+				if (firstElement == null && firstElement != "Lightning" && openShop == false && windUnlocked == true) {
 					firstElement = "Lightning";
 					initializeDamage = true;
 				}
 				if (firstElement != null && firstElement != "Lightning" && secondElement == null
-						&& secondElement != "Lightning") {
+						&& secondElement != "Lightning" && openShop == false && windUnlocked == true) {
 					secondElement = "Lightning";
 					initializeDamage = true;
 				}
 			}
+
 			if (dist(mouseX, mouseY, elementResetX + tileSize, elementResetY + tileSize) < tileSize) {
 				firstElement = null;
 				secondElement = null;
@@ -788,45 +890,45 @@ public class TheBigProject extends PApplet {
 	// ---------------------------------------------------------------------------------------------------\\
 	// Old man
 	void oldDude(float oldDudeX, float oldDudeY) {
-		if (characterXTile < oldManXMiddle) {
-			resourceManager.oldDudeImage = resourceManager.oldDudeLeft;
-		}
-		if (characterXTile > oldManXMiddle) {
-			resourceManager.oldDudeImage = resourceManager.oldDudeRight;
-		}
+		resourceManager.oldDudeImage.play();
+		/*
+		 * 
+		 * if (characterXTile < oldManXMiddle) { resourceManager.oldDudeImage =
+		 * resourceManager.oldDudeLeft; } if (characterXTile > oldManXMiddle) {
+		 * resourceManager.oldDudeImage = resourceManager.oldDudeRight; }
+		 * 
+		 * if (characterXTile < oldManXMiddle) { if (characterYTile <
+		 * oldManYMiddle - 2) { resourceManager.oldDudeImage =
+		 * resourceManager.oldDudeLeftUp; } if (characterYTile > oldManYMiddle -
+		 * 2) { resourceManager.oldDudeImage = resourceManager.oldDudeLeftDown;
+		 * } } if (characterXTile > oldManXMiddle) { if (characterYTile <
+		 * oldManYMiddle - 2) { resourceManager.oldDudeImage =
+		 * resourceManager.oldDudeRightUp; } if (characterYTile > oldManYMiddle
+		 * - 2) { resourceManager.oldDudeImage =
+		 * resourceManager.oldDudeRightDown; } }
+		 * 
+		 * if (characterXTile == oldManXMiddle - 0.5) { if (characterYTile <
+		 * oldManYMiddle - 2) { resourceManager.oldDudeImage =
+		 * resourceManager.oldDudeUp; } if (characterYTile > oldManYMiddle - 2)
+		 * { resourceManager.oldDudeImage = resourceManager.oldDudeDown; } }
+		 */
 
-		if (characterXTile < oldManXMiddle) {
-			if (characterYTile < oldManYMiddle - 2) {
-				resourceManager.oldDudeImage = resourceManager.oldDudeLeftUp;
-			}
-			if (characterYTile > oldManYMiddle - 2) {
-				resourceManager.oldDudeImage = resourceManager.oldDudeLeftDown;
-			}
-		}
-		if (characterXTile > oldManXMiddle) {
-			if (characterYTile < oldManYMiddle - 2) {
-				resourceManager.oldDudeImage = resourceManager.oldDudeRightUp;
-			}
-			if (characterYTile > oldManYMiddle - 2) {
-				resourceManager.oldDudeImage = resourceManager.oldDudeRightDown;
-			}
-		}
-
-		if (characterXTile == oldManXMiddle - 0.5) {
-			if (characterYTile < oldManYMiddle - 2) {
-				resourceManager.oldDudeImage = resourceManager.oldDudeUp;
-			}
-			if (characterYTile > oldManYMiddle - 2) {
-				resourceManager.oldDudeImage = resourceManager.oldDudeDown;
-			}
+		if (openShop == true && action == false) {
+			openShop = false;
+			loadElements = false;
 		}
 
 		if (dist(characterX, characterY, (oldDudeX + 25), (oldDudeY + 50)) < 200 && action == true) {
-			int chatBoxX = 50;
-			int chatBoxY = 600;
+			if (openShop == true) {
+				loadElements = true;
 
-			chatBox(chatBoxX, chatBoxY);
-			textChat(chatBoxX, chatBoxY);
+			} else {
+				int chatBoxX = 50;
+				int chatBoxY = 600;
+
+				chatBox(chatBoxX, chatBoxY);
+				textChat(chatBoxX, chatBoxY);
+			}
 		}
 	}
 
@@ -849,8 +951,13 @@ public class TheBigProject extends PApplet {
 		String secondIntroText = "The elements are powers of nature. They can be used to empower your attacks. \nSince the sundering of the Ajimeri Empire many of the secrets of these abilities \nhave been long forgotten. However, once in a while a child is born with these powers. \nI can sense from your strength that you are one of them.";
 		String thirdIntroText = "Though you are a powerful warrior, you have no experience with \nthe power of the elements. \nI am willing to teach you it's secrets and learn to master it. For a price. \nWith the sundering of the Ajimeri Empire most of the psionic power has been \nblasted into the world. \nThese psionic powers have nested in almost everything that lives. \nEmpowering their abilities, but also driving them \nin a rage.";
 		String fourthIntroText = "If you wish for me to train you, I require these psionic powers from such entities. \nBring their psionic essence to me, \nand I will trade it with you for knowledge of the elements.";
-		String firstElementText = "EEEUGHGHGHG";
+		String fifthIntroText = "Now that the roleplaying has gotten over with, on to more practical stuff. \nPress the extra button for additional dialogue. I know it's confusing but the guy who \nprogrammed this is partially retarded so cut him some slack. \nRight, so about the 'How to play' part of this well thought out tutorial.";
+		String sixthIntroText = "Moving around is done with the keys, you probably already figured that out \notherwise you wouldn't be standing here. \nPressing 'x' causes you to take an 'action'. \nPressing 'a' makes you do a sword attack. \n Pressing 'd' lets you throw out a bolt of energy. \nPressing 'c' opens the menu of elements.";
+		String seventhIntroText = "Right, so you probably opened the element selection screen already, \nso press the extra button for explanation of those.";
 
+		String firstElementText = "To unlock explanations of the elements: \nPlease donate a small fee of 5 euro's to the creater of this game. \nThis message has been brought to you by: Electronic Arts. It's in the game.";
+		String secondElementText = "Okay just kidding. Alright let me break it down for you, \nit's fairly easy because the programmer is bad at improvising. \nFire: Using fire sets your enemies on fire that deals a DoT. +50 DKP \n Ice: Using ice slows your enemies movement speed. \n Lightning: Using lightning causes an enemy to take and deal more damage.";
+		String thirdElementText = "Wind: Using wind causes your energy to move faster. \n Earth: Using earth makes your sword and energy attack deal more damage. \nDark: Using dark grants you a 10% life steal. \n Light: Using light causes you to take less damage, but also deal less. \n Water: Using water is fucking retarded because it does nothing. So don't even bother.";
 		if (currentTextSetting == "Introduction") {
 			if (currentText == 0) {
 				oldDudeText = firstIntroText;
@@ -860,11 +967,23 @@ public class TheBigProject extends PApplet {
 				oldDudeText = thirdIntroText;
 			} else if (currentText == 3) {
 				oldDudeText = fourthIntroText;
+			} else if (currentText == 4) {
+				oldDudeText = fifthIntroText;
+			} else if (currentText == 5) {
+				oldDudeText = sixthIntroText;
+			} else if (currentText == 6) {
+				oldDudeText = seventhIntroText;
 			}
 		}
 		if (currentTextSetting == "ElementExplanation") {
 			if (currentText == 0) {
 				oldDudeText = firstElementText;
+			}
+			if (currentText == 1) {
+				oldDudeText = secondElementText;
+			}
+			if (currentText == 2) {
+				oldDudeText = thirdElementText;
 			}
 		}
 
@@ -880,21 +999,14 @@ public class TheBigProject extends PApplet {
 		rect(nextChatX, nextChatY, 50, 50);
 		rect(prevChatX, nextChatY, 50, 50);
 		rect(extraChatX, nextChatY, 50, 50);
+		rect(shopChatX, nextChatY, 50, 50);
 		fill(0);
 		textFont(textFont);
+		text("Shop", shopChatX - 10, nextChatY);
 		text("Next", nextChatX - 10, nextChatY);
 		text("Previous", prevChatX - 23, nextChatY);
 		text("Extra", extraChatX - 10, nextChatY);
 
-	}
-
-	static public void main(String[] passedArgs) {
-		String[] appletArgs = new String[] { TheBigProject.class.getName() };
-		if (passedArgs != null) {
-			PApplet.main(concat(appletArgs, passedArgs));
-		} else {
-			PApplet.main(appletArgs);
-		}
 	}
 
 	// ---------------------------------------------------------------------------------------------------\\
@@ -1067,5 +1179,14 @@ public class TheBigProject extends PApplet {
 
 	public void setLoadedMap(boolean loadedMap) {
 		this.loadedMap = loadedMap;
+	}
+
+	static public void main(String[] passedArgs) {
+		String[] appletArgs = new String[] { TheBigProject.class.getName() };
+		if (passedArgs != null) {
+			PApplet.main(concat(appletArgs, passedArgs));
+		} else {
+			PApplet.main(appletArgs);
+		}
 	}
 }
