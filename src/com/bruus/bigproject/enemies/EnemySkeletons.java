@@ -20,14 +20,18 @@ public class EnemySkeletons {
 	float skeletonMovementSpeed;
 	boolean skeletonAttackDone;
 	float maxPsionicEssence;
+	boolean dropLoot;
+	float experience;
 	float actualPsionicEssence;
 	TheBigProject theBigProject;
+	int timeOfDeath;
+	float displayEssence;
 
 	Gif skeletonAnimation;
 
 	public EnemySkeletons(TheBigProject theBigProject, float skeletonPosX, float skeletonPosY, String skeletonDirection,
 			float skeletonLife, float skeletonMaxLife, float skeletonMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, boolean alive, boolean aggro, boolean skeletonAttacking, boolean skeletonAttackDone,
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean skeletonAttacking, boolean skeletonAttackDone,
 			String skeletonDebuff, Gif skeletonAnimation) {
 		this.skeletonPosX = skeletonPosX;
 		this.skeletonPosY = skeletonPosY;
@@ -36,6 +40,8 @@ public class EnemySkeletons {
 		this.skeletonMaxLife = skeletonMaxLife;
 		this.maxPsionicEssence = maxPsionicEssence;
 		this.actualPsionicEssence = actualPsionicEssence;
+		this.dropLoot = dropLoot;
+		this.experience = experience;
 		this.skeletonAnimation = skeletonAnimation;
 		this.skeletonDebuff = skeletonDebuff;
 		this.skeletonMovementSpeed = skeletonMovementSpeed;
@@ -72,6 +78,14 @@ public class EnemySkeletons {
 
 	public void displayskeletons() {
 		if (this.skeletonLife > 0) {
+			float randomNumber = theBigProject.random(0,100);
+			if (randomNumber < 10){
+				this.dropLoot = true;
+			}
+			
+			if (randomNumber > 10){
+				this.dropLoot = false;
+			}
 			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
 			this.skeletonAnimation.play();
 			if (this.alive == true) {
@@ -139,18 +153,27 @@ public class EnemySkeletons {
 				this.skeletonAnimation = theBigProject.resourceManager.deathExplosion;
 				theBigProject.deathExplosionTimer = theBigProject.millis() + 1080;
 				this.skeletonAnimation.play();
+				displayEssence = this.actualPsionicEssence;
+				timeOfDeath = theBigProject.millis();
 			}
 			this.alive = false;
 			if (theBigProject.deathExplosionTimer < theBigProject.millis()) {
 				this.skeletonAnimation = theBigProject.resourceManager.chestClosed;
+				theBigProject.characterExp += this.experience;
+				this.experience = 0;
 			}
 
 			if (TheBigProject.dist(theBigProject.characterX, theBigProject.characterY, this.skeletonPosX,
 					this.skeletonPosY) < 50 && this.skeletonAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.skeletonAnimation = theBigProject.resourceManager.chestOpen;
+				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.skeletonPosX, this.skeletonPosY, timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
+				if (this.dropLoot == true){
+					theBigProject.skeletonBones += 1;
+					this.dropLoot = false;
+				}
 			}
 		}
 		theBigProject.image(this.skeletonAnimation, this.skeletonPosX, this.skeletonPosY);
@@ -160,23 +183,23 @@ public class EnemySkeletons {
 		}
 	}
 
-	public void swordDamage(float attackDirection, float swordSize) {
+	public void swordDamage(float attackDirection, float swordSize, float swordDamage) {
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.skeletonPosX, this.skeletonPosY) < swordSize) {
 			if (theBigProject.lightningElement == true) {
-				this.skeletonLife = this.skeletonLife - (theBigProject.swordDamage * 1.5f);
+				this.skeletonLife = this.skeletonLife - (swordDamage * 1.5f);
 			} else {
-				this.skeletonLife = this.skeletonLife - theBigProject.swordDamage;
+				this.skeletonLife = this.skeletonLife - swordDamage;
 			}
 
 			if (theBigProject.fireElement == true) {
 				this.skeletonDebuff = "Fire";
 			}
 			if (theBigProject.iceElement == true) {
-				this.skeletonMovementSpeed = this.skeletonMovementSpeed / 2;
+				this.skeletonMovementSpeed = this.skeletonMovementSpeed - theBigProject.iceSlow;
 			}
 			if (theBigProject.darkElement == true) {
-				theBigProject.characterHealth += (theBigProject.swordDamage / 100) * theBigProject.lifeSteal;
+				theBigProject.characterHealth += (swordDamage / 100) * theBigProject.lifeSteal;
 			}
 			if (theBigProject.lightningElement == true) {
 				this.skeletonDebuff = "Lightning";
@@ -184,13 +207,15 @@ public class EnemySkeletons {
 		}
 	}
 
-	public void bowDamage() {
+	public void bowDamage(float bowDamage) {
 		if (TheBigProject.dist(theBigProject.arrowX, theBigProject.arrowY, this.skeletonPosX, this.skeletonPosY) < 50
 				&& theBigProject.arrowToFar == false) {
 			if (theBigProject.lightningElement == true) {
-				this.skeletonLife = this.skeletonLife - (theBigProject.bowDamage * 1.5f);
+				this.skeletonLife = this.skeletonLife - (bowDamage * theBigProject.lightningDamage);
+			} else if (theBigProject.lightElement == true) {
+				this.skeletonLife = this.skeletonLife - (bowDamage * theBigProject.lightCharDamage);
 			} else {
-				this.skeletonLife = this.skeletonLife - theBigProject.bowDamage;
+				this.skeletonLife = this.skeletonLife - bowDamage;
 			}
 			theBigProject.arrowToFar = true;
 			this.aggro = true;
@@ -201,7 +226,7 @@ public class EnemySkeletons {
 				this.skeletonMovementSpeed = 2.5f;
 			}
 			if (theBigProject.darkElement == true) {
-				theBigProject.characterHealth += (theBigProject.bowDamage / 100) * theBigProject.lifeSteal;
+				theBigProject.characterHealth += (bowDamage / 100) * theBigProject.lifeSteal;
 			}
 			if (theBigProject.lightningElement == true) {
 				this.skeletonDebuff = "Lightning";

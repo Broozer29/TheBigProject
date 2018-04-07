@@ -21,14 +21,18 @@ public class EnemyLanceKnights {
 	boolean knightAttackDone;
 	float maxPsionicEssence;
 	float actualPsionicEssence;
+	float experience;
 	TheBigProject theBigProject;
+	boolean dropLoot;
+	int timeOfDeath;
+	float displayEssence;
 
 	Gif knightAnimation;
 
 	public EnemyLanceKnights(TheBigProject theBigProject, float knightPosX, float knightPosY, String knightDirection,
 			float knightLife, float knightMaxLife, float knightMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, boolean alive, boolean aggro, boolean knightAttacking, boolean knightAttackDone,
-			String knightDebuff, Gif knightAnimation) {
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean knightAttacking,
+			boolean knightAttackDone, String knightDebuff, Gif knightAnimation) {
 		this.knightPosX = knightPosX;
 		this.knightPosY = knightPosY;
 		this.knightDirection = knightDirection;
@@ -36,6 +40,8 @@ public class EnemyLanceKnights {
 		this.knightMaxLife = knightMaxLife;
 		this.maxPsionicEssence = maxPsionicEssence;
 		this.actualPsionicEssence = actualPsionicEssence;
+		this.experience = experience;
+		this.dropLoot = dropLoot;
 		this.knightAnimation = knightAnimation;
 		this.knightDebuff = knightDebuff;
 		this.knightMovementSpeed = knightMovementSpeed;
@@ -72,6 +78,14 @@ public class EnemyLanceKnights {
 
 	public void displayKnights() {
 		if (this.knightLife > 0) {
+			float randomNumber = theBigProject.random(0,100);
+			if (randomNumber < 100){
+				this.dropLoot = true;
+			}
+			
+			if (randomNumber > 100){
+				this.dropLoot = false;
+			}
 			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
 			this.knightAnimation.play();
 			if (this.alive == true) {
@@ -137,18 +151,28 @@ public class EnemyLanceKnights {
 				this.knightAnimation = theBigProject.resourceManager.deathExplosion;
 				theBigProject.deathExplosionTimer = theBigProject.millis() + 1080;
 				this.knightAnimation.play();
+				displayEssence = this.actualPsionicEssence;
+				timeOfDeath = theBigProject.millis();
 			}
 			this.alive = false;
 			if (theBigProject.deathExplosionTimer < theBigProject.millis()) {
 				this.knightAnimation = theBigProject.resourceManager.chestClosed;
+				theBigProject.characterExp += this.experience;
+				this.experience = 0;
 			}
 
 			if (TheBigProject.dist(theBigProject.characterX, theBigProject.characterY, this.knightPosX,
 					this.knightPosY) < 50 && this.knightAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.knightAnimation = theBigProject.resourceManager.chestOpen;
+				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.knightPosX, this.knightPosY, timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
+				if (this.dropLoot == true){
+					theBigProject.lanceKnightSpearTips += 1;
+					this.dropLoot = false;
+				}
+
 			}
 		}
 		theBigProject.image(this.knightAnimation, this.knightPosX, this.knightPosY);
@@ -158,23 +182,23 @@ public class EnemyLanceKnights {
 		}
 	}
 
-	public void swordDamage(float attackDirection, float swordSize) {
+	public void swordDamage(float attackDirection, float swordSize, float swordDamage) {
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.knightPosX, this.knightPosY) < swordSize) {
 			if (theBigProject.lightningElement == true) {
-				this.knightLife = this.knightLife - (theBigProject.swordDamage * 1.5f);
+				this.knightLife = this.knightLife - (swordDamage * 1.5f);
 			} else {
-				this.knightLife = this.knightLife - theBigProject.swordDamage;
+				this.knightLife = this.knightLife - swordDamage;
 			}
 
 			if (theBigProject.fireElement == true) {
 				this.knightDebuff = "Fire";
 			}
 			if (theBigProject.iceElement == true) {
-				this.knightMovementSpeed = this.knightMovementSpeed / 2;
+				this.knightMovementSpeed = this.knightMovementSpeed - theBigProject.iceSlow;
 			}
 			if (theBigProject.darkElement == true) {
-				theBigProject.characterHealth += (theBigProject.swordDamage / 100) * theBigProject.lifeSteal;
+				theBigProject.characterHealth += (swordDamage / 100) * theBigProject.lifeSteal;
 			}
 			if (theBigProject.lightningElement == true) {
 				this.knightDebuff = "Lightning";
@@ -182,13 +206,15 @@ public class EnemyLanceKnights {
 		}
 	}
 
-	public void bowDamage() {
+	public void bowDamage(float bowDamage) {
 		if (TheBigProject.dist(theBigProject.arrowX, theBigProject.arrowY, this.knightPosX, this.knightPosY) < 50
 				&& theBigProject.arrowToFar == false) {
 			if (theBigProject.lightningElement == true) {
-				this.knightLife = this.knightLife - (theBigProject.bowDamage * 1.5f);
+				this.knightLife = this.knightLife - (bowDamage * theBigProject.lightningDamage);
+			} else if (theBigProject.lightElement == true) {
+				this.knightLife = this.knightLife - (bowDamage * theBigProject.lightCharDamage);
 			} else {
-				this.knightLife = this.knightLife - theBigProject.bowDamage;
+				this.knightLife = this.knightLife - bowDamage;
 			}
 			theBigProject.arrowToFar = true;
 			this.aggro = true;
@@ -199,7 +225,7 @@ public class EnemyLanceKnights {
 				this.knightMovementSpeed = 2.5f;
 			}
 			if (theBigProject.darkElement == true) {
-				theBigProject.characterHealth += (theBigProject.bowDamage / 100) * theBigProject.lifeSteal;
+				theBigProject.characterHealth += (bowDamage / 100) * theBigProject.lifeSteal;
 			}
 			if (theBigProject.lightningElement == true) {
 				this.knightDebuff = "Lightning";

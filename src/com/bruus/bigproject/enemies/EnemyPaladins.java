@@ -21,14 +21,18 @@ public class EnemyPaladins {
 	float paladinMovementSpeed;
 	boolean paladinAttackDone;
 	float maxPsionicEssence;
+	boolean dropLoot;
+	float experience;
 	float actualPsionicEssence;
 	TheBigProject theBigProject;
-
+	int timeOfDeath;
+	float displayEssence;
+	
 	Gif paladinAnimation;
 
 	public EnemyPaladins(TheBigProject theBigProject, float paladinPosX, float paladinPosY, String paladinDirection,
 			float paladinLife, float paladinMaxLife, float paladinMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, boolean alive, boolean aggro, boolean paladinAttacking,
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean paladinAttacking,
 			boolean paladinAttackDone, String paladinDebuff, Gif paladinAnimation) {
 		this.paladinPosX = paladinPosX;
 		this.paladinPosY = paladinPosY;
@@ -37,6 +41,8 @@ public class EnemyPaladins {
 		this.paladinMaxLife = paladinMaxLife;
 		this.maxPsionicEssence = maxPsionicEssence;
 		this.actualPsionicEssence = actualPsionicEssence;
+		this.dropLoot = dropLoot;
+		this.experience = experience;
 		this.paladinAnimation = paladinAnimation;
 		this.paladinDebuff = paladinDebuff;
 		this.paladinMovementSpeed = paladinMovementSpeed;
@@ -48,13 +54,21 @@ public class EnemyPaladins {
 	}
 
 	void paladinAttack() {
+		float randomNumber = theBigProject.random(0,100);
+		if (randomNumber < 10){
+			this.dropLoot = true;
+		}
+		
+		if (randomNumber > 10){
+			this.dropLoot = false;
+		}
 		if (waitUntilDamage < theBigProject.millis() && this.paladinAttacking == true
 				&& this.paladinAttackDone == false) {
 			if (this.paladinDebuff == "Lightning") {
 				if (theBigProject.lightElement == true) {
 					theBigProject.characterHealth -= paladinDamage / 2;
 				} else {
-					theBigProject.characterHealth -= paladinDamage;
+					theBigProject.characterHealth -= paladinDamage * 0.5;
 				}
 			}
 			if (theBigProject.lightElement == true) {
@@ -118,10 +132,12 @@ public class EnemyPaladins {
 					if (this.paladinPosX > theBigProject.characterX + paladinLanceSize) {
 						this.paladinPosX -= this.paladinMovementSpeed;
 						this.paladinDirection = "Left";
+						this.paladinAnimation = theBigProject.resourceManager.paladinLeftWalk;
 					}
 					if (this.paladinPosX < theBigProject.characterX - paladinLanceSize) {
 						this.paladinPosX += this.paladinMovementSpeed;
 						this.paladinDirection = "Right";
+						this.paladinAnimation = theBigProject.resourceManager.paladinRightWalk;
 					}
 					if (this.paladinPosY < theBigProject.characterY) {
 						this.paladinPosY += this.paladinMovementSpeed;
@@ -139,17 +155,26 @@ public class EnemyPaladins {
 				this.paladinAnimation = theBigProject.resourceManager.deathExplosion;
 				theBigProject.deathExplosionTimer = theBigProject.millis() + 1080;
 				this.paladinAnimation.play();
+				displayEssence = this.actualPsionicEssence;
+				timeOfDeath = theBigProject.millis();
 			}
 			this.alive = false;
 			if (theBigProject.deathExplosionTimer < theBigProject.millis()) {
 				this.paladinAnimation = theBigProject.resourceManager.chestClosed;
+				theBigProject.characterExp += this.experience;
+				this.experience = 0;
 			}
 			if (TheBigProject.dist(theBigProject.characterX, theBigProject.characterY, this.paladinPosX,
 					this.paladinPosY) < 50 && this.paladinAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.paladinAnimation = theBigProject.resourceManager.chestOpen;
+				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.paladinPosX, this.paladinPosY, timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
+				if (this.dropLoot == true){
+					theBigProject.paladinArmorScraps += 1;
+					this.dropLoot = false;
+				}
 			}
 		}
 
@@ -160,34 +185,41 @@ public class EnemyPaladins {
 		}
 	}
 
-	public void swordDamage(float attackDirection, float swordSize) {
+	public void swordDamage(float attackDirection, float swordSize, float swordDamage) {
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.paladinPosX, this.paladinPosY) < swordSize) {
 			if (theBigProject.lightningElement == true) {
-				this.paladinLife = this.paladinLife - (theBigProject.swordDamage * 1.5f);
+				this.paladinLife = this.paladinLife - (swordDamage * 1.5f);
 			} else {
-				this.paladinLife = this.paladinLife - theBigProject.swordDamage;
+				this.paladinLife = this.paladinLife - swordDamage;
 			}
 
 			if (theBigProject.fireElement == true) {
 				this.paladinDebuff = "Fire";
 			}
 			if (theBigProject.iceElement == true) {
-				this.paladinMovementSpeed = this.paladinMovementSpeed / 2;
+				this.paladinMovementSpeed = this.paladinMovementSpeed - theBigProject.iceSlow;
 			}
 			if (theBigProject.darkElement == true) {
-				theBigProject.characterHealth += (theBigProject.swordDamage / 100) * theBigProject.lifeSteal;
+				theBigProject.characterHealth += (swordDamage / 100) * theBigProject.lifeSteal;
 			}
 			if (theBigProject.lightningElement == true) {
-				this.paladinDebuff = "Light";
+				this.paladinDebuff = "Lightning";
 			}
 		}
 	}
 
-	public void bowDamage() {
+	public void bowDamage(float bowDamage) {
 		if (TheBigProject.dist(theBigProject.arrowX, theBigProject.arrowY, this.paladinPosX, this.paladinPosY) < 50
 				&& theBigProject.arrowToFar == false) {
-			this.paladinLife -= theBigProject.bowDamage;
+
+			if (theBigProject.lightningElement == true) {
+				this.paladinLife = this.paladinLife - (bowDamage * theBigProject.lightningDamage);
+			} else if (theBigProject.lightElement == true) {
+				this.paladinLife = this.paladinLife - (bowDamage * theBigProject.lightCharDamage);
+			} else {
+				this.paladinLife = this.paladinLife - bowDamage;
+			}
 			theBigProject.arrowToFar = true;
 			this.aggro = true;
 			if (theBigProject.fireElement == true) {
@@ -197,11 +229,16 @@ public class EnemyPaladins {
 				this.paladinMovementSpeed = 2.5f;
 			}
 			if (theBigProject.darkElement == true) {
-				theBigProject.characterHealth += (theBigProject.bowDamage / 100) * theBigProject.lifeSteal;
+				theBigProject.characterHealth += (bowDamage / 100) * theBigProject.lifeSteal;
 			}
 			if (theBigProject.lightningElement == true) {
 				this.paladinDebuff = "Lightning";
 			}
+		}
+
+		if (theBigProject.arrowX < theBigProject.oldCharacterX - 500
+				|| theBigProject.arrowX > theBigProject.oldCharacterX + 500) {
+			theBigProject.arrowToFar = true;
 		}
 	}
 }
