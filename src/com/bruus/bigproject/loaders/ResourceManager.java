@@ -23,8 +23,9 @@ public class ResourceManager {
 
 	public Gif medusaLeftIdle, medusaRightIdle, medusaLeftWalk, medusaRightWalk, medusaLeftAttack, medusaRightAttack,
 			medusaProjectile;
-	
-	public Gif scorpionLeftIdle, scorpionRightIdle, scorpionLeftAttack, scorpionRightAttack, scorpionLeftWalk, scorpionRightWalk;
+
+	public Gif scorpionLeftIdle, scorpionRightIdle, scorpionLeftAttack, scorpionRightAttack, scorpionLeftWalk,
+			scorpionRightWalk;
 
 	public Gif deathExplosion, chestOpen, chestClosed, fireBurning;
 
@@ -46,13 +47,18 @@ public class ResourceManager {
 	public PImage swordImage, swordOne, swordTwo, swordThree, swordFour, swordFive, swordSix;
 	public PImage axeImage, axeOne, axeTwo, axeThree, axeFour, axeFive;
 	public PImage scimitarImage, scimitarOne, scimitarTwo, scimitarThree, scimitarFour;
+	public PImage helmImage, helmOne, helmTwo, helmThree, helmFour, helmFive;
+	public PImage chestImage, chestOne, chestTwo, chestThree, chestFour, chestFive;
+	public PImage pantsImage, pantsOne, pantsTwo, pantsThree, pantsFour, pantsFive;
+	public PImage bootsImage, bootsOne, bootsTwo, bootsThree, bootsFour, bootsFive;
 	public PImage blacksmithHouse;
-	
+	public PImage scorpionScale, medusaHair, houndTooth, skeletonBone, paladinArmorScrap, lanceKnightSpearTip;
+	public PImage cityGrass, cityRoadWest, cityRoadNorth, cityRoadRightTopCorner, cityRoadRightBotCorner, cityRoadLeftTopCorner, cityRoadLeftBotCorner, cityTree;
 
 	private String baseFolder = new File("bin").getAbsolutePath();
 
 	public void loadImages(PApplet myApplet) {
-		blackSmith = new Gif (myApplet, baseFolder + "/Loading_Images/SmithAnimation.gif");
+		//blackSmith = new Gif(myApplet, baseFolder + "/Loading_Images/SmithAnimation.gif");
 		blacksmithHouse = myApplet.loadImage(baseFolder + "/Loading_Images/BlackSmithHouse.png");
 
 		// Character //
@@ -64,10 +70,10 @@ public class ResourceManager {
 
 		attackRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRightAttack.gif");
 		attackLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberAttackLeft.gif");
-		saberDoubleARight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleARight.gif");
-		saberDoubleALeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleALeft.gif");
-		saberMeleeRangedLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackLeft.gif");
-		saberMeleeRangedRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackRight.gif");
+		//saberDoubleARight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleARight.gif");
+		//saberDoubleALeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleALeft.gif");
+		//saberMeleeRangedLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackLeft.gif");
+		//saberMeleeRangedRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackRight.gif");
 		attackBowLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRangedAttackLeft.gif");
 		attackBowRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRangedAttackRight.gif");
 
@@ -76,32 +82,66 @@ public class ResourceManager {
 
 		projectileSaber = projectileLeft;
 		currentAnimation = lookingLeft;
-		
-		
+
+		// Materials //
+		scorpionScale = myApplet.loadImage(baseFolder + "/Loading_Images/Materials/ScorpionScale.png");
+		medusaHair = myApplet.loadImage(baseFolder + "/Loading_Images/Materials/MedusaHair.png");
+		skeletonBone = myApplet.loadImage(baseFolder + "/Loading_Images/Materials/SkeletonBone.png");
+		houndTooth = myApplet.loadImage(baseFolder + "/Loading_Images/Materials/HoundTeeth.png");
+		lanceKnightSpearTip = myApplet.loadImage(baseFolder + "/Loading_Images/Materials/LanceKnightSpearTip.png");
+		paladinArmorScrap = myApplet.loadImage(baseFolder + "/Loading_Images/Materials/PaladinArmorScraps.png");
+
 		// Character Weapons //
 		swordOne = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword1.png");
-		swordTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword2.png");	
+		swordTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword2.png");
 		swordThree = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword3.png");
 		swordFour = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword4.png");
 		swordFive = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword5.png");
 		swordSix = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Sword6.png");
-		
 
-		
 		axeOne = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Axe1.png");
 		axeTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Axe2.png");
 		axeThree = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Axe3.png");
 		axeFour = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Axe4.png");
 		axeFive = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Axe5.png");
-		
+
 		scimitarOne = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Scimitar1.png");
 		scimitarTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Scimitar2.png");
 		scimitarThree = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Scimitar3.png");
 		scimitarFour = myApplet.loadImage(baseFolder + "/Loading_Images/Weapons/Scimitar4.png");
-		
+
 		swordImage = swordOne;
 		axeImage = axeOne;
 		scimitarImage = scimitarOne;
+
+		helmOne = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Helm1.png");
+		helmTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Helm2.png");
+		helmThree = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Helm3.png");
+		helmFour = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Helm4.png");
+		helmFive = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Helm5.png");
+
+		chestOne = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Chest1.png");
+		chestTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Chest2.png");
+		chestThree = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Chest3.png");
+		chestFour = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Chest4.png");
+		chestFive = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Chest5.png");
+
+		pantsOne = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Pants1.png");
+		pantsTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Pants2.png");
+		pantsThree = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Pants3.png");
+		pantsFour = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Pants4.png");
+		pantsFive = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Pants5.png");
+
+		bootsOne = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Boots1.png");
+		bootsTwo = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Boots2.png");
+		bootsThree = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Boots3.png");
+		bootsFour = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Boots4.png");
+		bootsFive = myApplet.loadImage(baseFolder + "/Loading_Images/Armor/Boots5.png");
+
+		helmImage = helmOne;
+		chestImage = chestOne;
+		pantsImage = pantsOne;
+		bootsImage = bootsOne;
 		// Old dude //
 
 		/*
@@ -134,9 +174,7 @@ public class ResourceManager {
 		houndRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Hound/HoundWalkRight.gif");
 		houndLeftAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Hound/HoundAttackLeft.gif");
 		houndRightAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Hound/HoundAttackRight.gif");
-		
-		
-		
+
 		// LanceKnights //
 		lanceKnightRightAttack = new Gif(myApplet, baseFolder + "/Loading_Images/LanceKnightAttackRight.gif");
 		lanceKnightRightIdle = new Gif(myApplet, baseFolder + "/Loading_Images/lanceKnightIdleRight.gif");
@@ -147,22 +185,21 @@ public class ResourceManager {
 		lanceKnightRightAnimation = lanceKnightRightIdle;
 
 		// Medusas//
-		medusaLeftIdle = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaIdleLeft.gif");
-		medusaRightIdle = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaIdleRight.gif");
-		medusaLeftAttack = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaLeftAttack.gif");
-		medusaRightAttack = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaAttackRight.gif");
-		medusaLeftWalk = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaWalkLeft.gif");
-		medusaRightWalk = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaWalkRight.gif");
-		medusaProjectile = new Gif (myApplet, baseFolder + "/Loading_Images/Medusa/MedusaProjectile.gif");
-		
-		
+		medusaLeftIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaIdleLeft.gif");
+		medusaRightIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaIdleRight.gif");
+		medusaLeftAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaLeftAttack.gif");
+		medusaRightAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaAttackRight.gif");
+		medusaLeftWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaWalkLeft.gif");
+		medusaRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaWalkRight.gif");
+		medusaProjectile = new Gif(myApplet, baseFolder + "/Loading_Images/Medusa/MedusaProjectile.gif");
+
 		// Paladins //
 		paladinLeftIdle = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinIdleLeft.gif");
 		paladinRightIdle = new Gif(myApplet, baseFolder + "/Loading_Images/PaladingIdleRight.gif");
 		paladinLeftAttack = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinAttackLeft.gif");
 		paladinRightAttack = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinAttackRight.gif");
 		paladinLeftWalk = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinWalkLeft.gif");
-		paladinRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinWalkRight.gif");  
+		paladinRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinWalkRight.gif");
 
 		// Skeletons //
 		skeletonRightIdle = new Gif(myApplet,
@@ -177,6 +214,14 @@ public class ResourceManager {
 				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonWalkRight.gif");
 		skeletonLeftWalk = new Gif(myApplet,
 				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonWalkLeft.gif");
+
+		// Scorpions //
+		scorpionLeftIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionIdleLeft.gif");
+		scorpionRightIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionIdleRight.gif");
+		scorpionLeftAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionAttackLeft.gif");
+		scorpionRightAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionAttackRight.gif");
+		scorpionLeftWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionWalkLeft.gif");
+		scorpionRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionWalkRight.gif");
 
 		// General enemies //
 		deathExplosion = new Gif(myApplet, baseFolder + "/Loading_Images/DeathExplosion.gif");
@@ -203,6 +248,17 @@ public class ResourceManager {
 		DesertStoneOne = myApplet.loadImage(baseFolder + "/Loading_Images/DesertStone1.png");
 		DesertStoneTwo = myApplet.loadImage(baseFolder + "/Loading_Images/DesertStone2.png");
 		DesertStoneThree = myApplet.loadImage(baseFolder + "/Loading_Images/DesertStone3.png");
+		
+		// City Tiles //
+		cityGrass = myApplet.loadImage(baseFolder + "/Loading_Images/City/CityGround.png");
+		cityRoadNorth = myApplet.loadImage(baseFolder + "/Loading_Images/City/RoadTileNorth.png");
+		cityRoadWest = myApplet.loadImage(baseFolder + "/Loading_Images/City/RoadTileWest.png");
+		cityTree = myApplet.loadImage(baseFolder + "/Loading_Images/City/CityTreeLarger.png");
+		cityRoadRightTopCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadRightTopCorner"); 
+		cityRoadRightBotCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadRightBotCorner"); 
+		cityRoadLeftTopCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadLeftTopCorner"); 
+		cityRoadLeftBotCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadLeftBotCorner"); 
+		
 		// Elements //
 		elementImageFire = myApplet.loadImage(baseFolder + "/Loading_Images/ElementsFire.png");
 		elementImageLight = myApplet.loadImage(baseFolder + "/Loading_Images/ElementsLight.png");
@@ -217,7 +273,7 @@ public class ResourceManager {
 	}
 
 	public void loadMusic(PApplet myApplet) {
-		forestMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/NieRForest.mp3");
+		forestMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/Forest.mp3");
 		squareMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/ProleteR - Faidherbe square.mp3");
 		desertMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/Desert.mp3");
 		traderHouseMusic = new SoundFile(myApplet,

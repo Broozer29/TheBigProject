@@ -31,8 +31,8 @@ public class EnemySkeletons {
 
 	public EnemySkeletons(TheBigProject theBigProject, float skeletonPosX, float skeletonPosY, String skeletonDirection,
 			float skeletonLife, float skeletonMaxLife, float skeletonMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean skeletonAttacking, boolean skeletonAttackDone,
-			String skeletonDebuff, Gif skeletonAnimation) {
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro,
+			boolean skeletonAttacking, boolean skeletonAttackDone, String skeletonDebuff, Gif skeletonAnimation) {
 		this.skeletonPosX = skeletonPosX;
 		this.skeletonPosY = skeletonPosY;
 		this.skeletonDirection = skeletonDirection;
@@ -78,15 +78,20 @@ public class EnemySkeletons {
 
 	public void displayskeletons() {
 		if (this.skeletonLife > 0) {
-			float randomNumber = theBigProject.random(0,100);
-			if (randomNumber < 10){
+			float randomNumber = theBigProject.random(0, 100);
+			if (randomNumber < theBigProject.dropRate) {
 				this.dropLoot = true;
 			}
-			
-			if (randomNumber > 10){
+
+			if (randomNumber > theBigProject.dropRate) {
 				this.dropLoot = false;
 			}
-			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			if (theBigProject.waterElement == true) {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - theBigProject.dropRate,
+						this.maxPsionicEssence + theBigProject.dropRate);
+			} else {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			}
 			this.skeletonAnimation.play();
 			if (this.alive == true) {
 				theBigProject.healthBar(this.skeletonPosX, this.skeletonPosY, this.skeletonLife, skeletonMaxLife);
@@ -167,10 +172,11 @@ public class EnemySkeletons {
 					this.skeletonPosY) < 50 && this.skeletonAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.skeletonAnimation = theBigProject.resourceManager.chestOpen;
-				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.skeletonPosX, this.skeletonPosY, timeOfDeath);
+				theBigProject.itemsGained(displayEssence, "Skeleton Bone", this.skeletonPosX, this.skeletonPosY,
+						timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
-				if (this.dropLoot == true){
+				if (this.dropLoot == true) {
 					theBigProject.skeletonBones += 1;
 					this.dropLoot = false;
 				}

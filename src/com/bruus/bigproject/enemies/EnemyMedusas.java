@@ -31,8 +31,8 @@ public class EnemyMedusas {
 
 	public EnemyMedusas(TheBigProject theBigProject, float medusaPosX, float medusaPosY, String medusaDirection,
 			float medusaLife, float medusaMaxLife, float medusaMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean medusaAttacking, boolean medusaAttackDone,
-			String medusaDebuff, Gif medusaAnimation) {
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro,
+			boolean medusaAttacking, boolean medusaAttackDone, String medusaDebuff, Gif medusaAnimation) {
 		this.medusaPosX = medusaPosX;
 		this.medusaPosY = medusaPosY;
 		this.medusaDirection = medusaDirection;
@@ -55,11 +55,11 @@ public class EnemyMedusas {
 	void medusaAttack() {
 		if (waitUntilDamage < theBigProject.millis() && this.medusaAttacking == true
 				&& this.medusaAttackDone == false) {
-			
+
 			RangedProjectiles projectile = new RangedProjectiles(theBigProject, this.medusaPosX, this.medusaPosY, false,
 					"Medusa", this.medusaDebuff, this.medusaDirection);
 			this.theBigProject.allProjectiles.add(projectile);
-			
+
 			this.medusaAttackDone = true;
 		}
 		if (waitUntilDamage < theBigProject.millis() + medusaAttackSpeed && this.medusaAttacking == true
@@ -71,15 +71,20 @@ public class EnemyMedusas {
 
 	public void displaymedusas() {
 		if (this.medusaLife > 0) {
-			float randomNumber = theBigProject.random(0,100);
-			if (randomNumber < 10){
+			float randomNumber = theBigProject.random(0, 100);
+			if (randomNumber < theBigProject.dropRate) {
 				this.dropLoot = true;
 			}
-			
-			if (randomNumber > 10){
+
+			if (randomNumber > theBigProject.dropRate) {
 				this.dropLoot = false;
 			}
-			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			if (theBigProject.waterElement == true) {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - theBigProject.dropRate,
+						this.maxPsionicEssence + theBigProject.dropRate);
+			} else {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			}
 			this.medusaAnimation.play();
 			if (this.alive == true) {
 				theBigProject.healthBar(this.medusaPosX, this.medusaPosY, this.medusaLife, medusaMaxLife);
@@ -121,15 +126,15 @@ public class EnemyMedusas {
 				}
 
 				if (aggro == true) {
-					if (this.medusaPosX > theBigProject.characterX + 50){
+					if (this.medusaPosX > theBigProject.characterX + 50) {
 						this.medusaDirection = "Left";
 					}
-					if (this.medusaPosX < theBigProject.characterX - 50){
+					if (this.medusaPosX < theBigProject.characterX - 50) {
 						this.medusaDirection = "Right";
 					}
 					if (this.medusaPosX > theBigProject.characterX + medusaRange) {
 						this.medusaPosX -= this.medusaMovementSpeed;
-						
+
 						this.medusaAnimation = theBigProject.resourceManager.medusaLeftWalk;
 					}
 					if (this.medusaPosX < theBigProject.characterX - medusaRange) {
@@ -165,10 +170,10 @@ public class EnemyMedusas {
 					this.medusaPosY) < 50 && this.medusaAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.medusaAnimation = theBigProject.resourceManager.chestOpen;
-				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.medusaPosX, this.medusaPosY, timeOfDeath);
+				theBigProject.itemsGained(displayEssence, "Medusa Hair", this.medusaPosX, this.medusaPosY, timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
-				if (this.dropLoot == true){
+				if (this.dropLoot == true) {
 					theBigProject.medusaHair += 1;
 					this.dropLoot = false;
 				}

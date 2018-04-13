@@ -31,8 +31,8 @@ public class EnemyHounds {
 
 	public EnemyHounds(TheBigProject theBigProject, float houndPosX, float houndPosY, String houndDirection,
 			float houndLife, float houndMaxLife, float houndMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean houndAttacking, boolean houndAttackDone,
-			String houndDebuff, Gif houndAnimation) {
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro,
+			boolean houndAttacking, boolean houndAttackDone, String houndDebuff, Gif houndAnimation) {
 		this.houndPosX = houndPosX;
 		this.houndPosY = houndPosY;
 		this.houndDirection = houndDirection;
@@ -53,8 +53,7 @@ public class EnemyHounds {
 	}
 
 	void houndAttack() {
-		if (waitUntilDamage < theBigProject.millis() && this.houndAttacking == true
-				&& this.houndAttackDone == false) {
+		if (waitUntilDamage < theBigProject.millis() && this.houndAttacking == true && this.houndAttackDone == false) {
 			if (this.houndDebuff == "Lightning") {
 				if (theBigProject.lightElement == true) {
 					theBigProject.characterHealth -= 1;
@@ -78,15 +77,20 @@ public class EnemyHounds {
 
 	public void displayhounds() {
 		if (this.houndLife > 0) {
-			float randomNumber = theBigProject.random(0,100);
-			if (randomNumber < 10){
+			float randomNumber = theBigProject.random(0, 100);
+			if (randomNumber < theBigProject.dropRate) {
 				this.dropLoot = true;
 			}
-			
-			if (randomNumber > 10){
+
+			if (randomNumber > theBigProject.dropRate) {
 				this.dropLoot = false;
 			}
-			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			if (theBigProject.waterElement == true) {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - theBigProject.dropRate, this.maxPsionicEssence + theBigProject.dropRate);
+			}
+			else {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			}
 			this.houndAnimation.play();
 			if (this.alive == true) {
 				theBigProject.healthBar(this.houndPosX, this.houndPosY, this.houndLife, houndMaxLife);
@@ -167,10 +171,10 @@ public class EnemyHounds {
 					this.houndPosY) < 50 && this.houndAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.houndAnimation = theBigProject.resourceManager.chestOpen;
-				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.houndPosX, this.houndPosY, timeOfDeath);
+				theBigProject.itemsGained(displayEssence, "Hound Teeth", this.houndPosX, this.houndPosY, timeOfDeath);
 				theBigProject.playerPsionicEssence += this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
-				if (this.dropLoot == true){
+				if (this.dropLoot == true) {
 					theBigProject.houndTeeth += 1;
 					this.dropLoot = false;
 				}

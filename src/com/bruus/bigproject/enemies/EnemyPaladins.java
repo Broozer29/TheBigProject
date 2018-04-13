@@ -55,11 +55,11 @@ public class EnemyPaladins {
 
 	void paladinAttack() {
 		float randomNumber = theBigProject.random(0,100);
-		if (randomNumber < 10){
+		if (randomNumber < theBigProject.dropRate){
 			this.dropLoot = true;
 		}
 		
-		if (randomNumber > 10){
+		if (randomNumber > theBigProject.dropRate){
 			this.dropLoot = false;
 		}
 		if (waitUntilDamage < theBigProject.millis() && this.paladinAttacking == true
@@ -168,7 +168,7 @@ public class EnemyPaladins {
 					this.paladinPosY) < 50 && this.paladinAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.paladinAnimation = theBigProject.resourceManager.chestOpen;
-				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.paladinPosX, this.paladinPosY, timeOfDeath);
+				theBigProject.itemsGained(displayEssence, "Paladin Armor Scraps", this.paladinPosX, this.paladinPosY, timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
 				if (this.dropLoot == true){

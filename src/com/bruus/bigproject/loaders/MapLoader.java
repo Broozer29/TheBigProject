@@ -8,20 +8,28 @@ import java.util.ArrayList;
 
 import com.bruus.bigproject.TheBigProject;
 import com.bruus.bigproject.gameobjects.Barrier;
+import com.bruus.bigproject.gameobjects.CityCornerBotLeft;
+import com.bruus.bigproject.gameobjects.CityCornerBotRight;
+import com.bruus.bigproject.gameobjects.CityCornerTopLeft;
+import com.bruus.bigproject.gameobjects.CityCornerTopRight;
+import com.bruus.bigproject.gameobjects.CityGrass;
+import com.bruus.bigproject.gameobjects.CityRoadNorth;
+import com.bruus.bigproject.gameobjects.CityRoadWest;
+import com.bruus.bigproject.gameobjects.CityTree;
 import com.bruus.bigproject.gameobjects.DesertGround;
 import com.bruus.bigproject.gameobjects.DesertStoneOne;
 import com.bruus.bigproject.gameobjects.DesertStoneThree;
 import com.bruus.bigproject.gameobjects.DesertStoneTwo;
 import com.bruus.bigproject.gameobjects.GameObject;
 import com.bruus.bigproject.gameobjects.Grass;
+import com.bruus.bigproject.gameobjects.HauntedForestWater;
 import com.bruus.bigproject.gameobjects.Road;
 import com.bruus.bigproject.gameobjects.Trees;
 import com.bruus.bigproject.gameobjects.Water;
-import com.bruus.bigproject.gameobjects.traderHouseFloor;
-import com.bruus.bigproject.gameobjects.HauntedForestWater;
-import com.bruus.bigproject.gameobjects.hauntedForestGrass;
 import com.bruus.bigproject.gameobjects.hauntedForestBushOne;
 import com.bruus.bigproject.gameobjects.hauntedForestBushTwo;
+import com.bruus.bigproject.gameobjects.hauntedForestGrass;
+import com.bruus.bigproject.gameobjects.traderHouseFloor;
 
 public class MapLoader { // <>//
 	TheBigProject theBigProject;
@@ -54,10 +62,6 @@ public class MapLoader { // <>//
 					result.add(new Barrier(theBigProject, x * 50, y * 50, 50, 50));
 				else if (tileType == 'O')
 					result.add(new traderHouseFloor(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'X')
-					result.add(new hauntedForestBushOne(theBigProject, x * 50, y* 50, 50, 50));
-				else if (tileType == 'C')
-					result.add(new hauntedForestBushTwo(theBigProject, x * 50, y * 50, 50, 50));
 
 				else if (tileType == 'A')
 					result.add(new DesertGround(theBigProject, x * 50, y * 50, 50, 50));
@@ -72,7 +76,27 @@ public class MapLoader { // <>//
 					result.add(new hauntedForestGrass(theBigProject, x * 50, y * 50, 50, 50));
 				else if (tileType == 'Z')
 					result.add(new HauntedForestWater(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'X')
+					result.add(new hauntedForestBushOne(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'C')
+					result.add(new hauntedForestBushTwo(theBigProject, x * 50, y * 50, 50, 50));
 
+				else if (tileType == 'L')
+					result.add(new CityTree(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'M')
+					result.add(new CityRoadNorth(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'N')
+					result.add(new CityRoadWest(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'U')
+					result.add(new CityCornerTopLeft(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'H')
+					result.add(new CityCornerTopRight(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'J')
+					result.add(new CityCornerBotRight(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'K')
+					result.add(new CityCornerBotLeft(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'V')
+					result.add(new CityGrass(theBigProject, x * 50, y * 50, 50, 50));
 				else
 					System.out.println("Ignored " + tileType);
 			}

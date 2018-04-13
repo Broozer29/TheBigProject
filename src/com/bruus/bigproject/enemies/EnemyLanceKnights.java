@@ -31,8 +31,8 @@ public class EnemyLanceKnights {
 
 	public EnemyLanceKnights(TheBigProject theBigProject, float knightPosX, float knightPosY, String knightDirection,
 			float knightLife, float knightMaxLife, float knightMovementSpeed, float maxPsionicEssence,
-			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro, boolean knightAttacking,
-			boolean knightAttackDone, String knightDebuff, Gif knightAnimation) {
+			float actualPsionicEssence, float experience, boolean dropLoot, boolean alive, boolean aggro,
+			boolean knightAttacking, boolean knightAttackDone, String knightDebuff, Gif knightAnimation) {
 		this.knightPosX = knightPosX;
 		this.knightPosY = knightPosY;
 		this.knightDirection = knightDirection;
@@ -78,15 +78,19 @@ public class EnemyLanceKnights {
 
 	public void displayKnights() {
 		if (this.knightLife > 0) {
-			float randomNumber = theBigProject.random(0,100);
-			if (randomNumber < 100){
+			float randomNumber = theBigProject.random(0, 100);
+			if (randomNumber < theBigProject.dropRate) {
 				this.dropLoot = true;
 			}
-			
-			if (randomNumber > 100){
+			if (randomNumber > theBigProject.dropRate) {
 				this.dropLoot = false;
 			}
-			this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			if (theBigProject.waterElement == true) {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - theBigProject.dropRate,
+						this.maxPsionicEssence + theBigProject.dropRate);
+			} else {
+				this.actualPsionicEssence = theBigProject.random(this.maxPsionicEssence - 50, this.maxPsionicEssence);
+			}
 			this.knightAnimation.play();
 			if (this.alive == true) {
 				theBigProject.healthBar(this.knightPosX, this.knightPosY, this.knightLife, knightMaxLife);
@@ -165,10 +169,11 @@ public class EnemyLanceKnights {
 					this.knightPosY) < 50 && this.knightAnimation == theBigProject.resourceManager.chestClosed
 					&& theBigProject.action == true) {
 				this.knightAnimation = theBigProject.resourceManager.chestOpen;
-				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.knightPosX, this.knightPosY, timeOfDeath);
+				theBigProject.itemsGained(displayEssence, "Lance Knight Spear tip", this.knightPosX, this.knightPosY,
+						timeOfDeath);
 				theBigProject.playerPsionicEssence = theBigProject.playerPsionicEssence + this.actualPsionicEssence;
 				this.actualPsionicEssence = 0;
-				if (this.dropLoot == true){
+				if (this.dropLoot == true) {
 					theBigProject.lanceKnightSpearTips += 1;
 					this.dropLoot = false;
 				}

@@ -8,6 +8,7 @@ import com.bruus.bigproject.enemies.EnemyHounds;
 import com.bruus.bigproject.enemies.EnemyLanceKnights;
 import com.bruus.bigproject.enemies.EnemyMedusas;
 import com.bruus.bigproject.enemies.EnemyPaladins;
+import com.bruus.bigproject.enemies.EnemyScorpions;
 import com.bruus.bigproject.enemies.EnemySkeletons;
 import com.bruus.bigproject.enemies.RangedProjectiles;
 import com.bruus.bigproject.gameobjects.GameObject;
@@ -31,6 +32,7 @@ public class TheBigProject extends PApplet {
 	ArrayList<EnemySkeletons> allSkeletons;
 	ArrayList<EnemyHounds> allHounds;
 	ArrayList<EnemyMedusas> allMedusas;
+	ArrayList<EnemyScorpions> allScorpions;
 
 	public ResourceManager resourceManager = new ResourceManager();
 	int screenWidth;
@@ -43,14 +45,15 @@ public class TheBigProject extends PApplet {
 	public float characterYTile;
 	public float characterMaxHealth = 100;
 	public float characterHealth = 100;
+	public float healthBonus;
 	public float characterMoveSpeed = 20;
 	public float playerPsionicEssence = 0;
-	public float scorpionScales = 0;
-	public float medusaHair = 0;
-	public float skeletonBones = 0;
-	public float paladinArmorScraps = 0;
-	public float lanceKnightSpearTips = 0;
-	public float houndTeeth = 0;
+	public int scorpionScales = 500;
+	public int medusaHair = 500;
+	public int skeletonBones = 500;
+	public int paladinArmorScraps = 500;
+	public int lanceKnightSpearTips = 500;
+	public int houndTeeth = 500;
 
 	// Character combat stats
 	public int characterLevel = 0;
@@ -67,6 +70,7 @@ public class TheBigProject extends PApplet {
 	public long attackSpeed = 2220;
 	public float lifeSteal = 10;
 	public float windSpeed;
+	public float dropRate = 10;
 	float swordDamage = baseDamage;
 	float bowDamage = baseBowDamage;
 	float levelAmplifier = 1;
@@ -80,6 +84,10 @@ public class TheBigProject extends PApplet {
 	public int swordLevel = 1;
 	public int axeLevel = 1;
 	public int scimitarLevel = 1;
+	public int helmLevel = 0;
+	public int chestLevel = 0;
+	public int pantsLevel = 0;
+	public int bootsLevel = 0;
 
 	// Map variables
 	public int tileSize = 50;
@@ -138,7 +146,8 @@ public class TheBigProject extends PApplet {
 	public float paladinHealth = 500;
 	public float lanceKnightHealth = 300;
 	public float skeletonHealth = 300;
-	public float medusaHealth = 250;
+	public float scorpionHealth = 350;
+	public float medusaHealth = 450;
 	public float houndHealth = 600;
 	public float houndMoveSpeed = 6;
 	public float skeletonMoveSpeed = 4;
@@ -146,14 +155,17 @@ public class TheBigProject extends PApplet {
 	public float psionicEssenceDropKnight = 50;
 	public float psionicEssenceDropPaladin = 100;
 	public float psionicEssenceDropSkeleton = 50;
-	public float psionicEssenceDropMedusa = 75;
+	public float psionicEssenceDropScorpion = 75;
+	public float psionicEssenceDropMedusa = 150;
 	public float psionicEssenceDropHound = 200;
+
 	public boolean dropLoot = false;
 
 	public float lanceKnightExp = 50;
 	public float paladingExp = 100;
 	public float skeletonExp = 50;
-	public float medusaExp = 150;
+	public float scorpionExp = 75;
+	public float medusaExp = 200;
 	public float houndExp = 300;
 
 	// Variables for attacks
@@ -171,10 +183,16 @@ public class TheBigProject extends PApplet {
 	public PFont psionicFont;
 	public PFont textFont;
 
+	// Variables for images on screen
 	public float swordX = 400;
 	public float axeX = 800;
 	public float scimitarX = 1200;
 	public float weaponY = 100;
+	public float armorX = 75;
+	public float helmY = 150;
+	public float chestY = 250;
+	public float pantsY = 350;
+	public float bootsY = 450;
 
 	public float elementFireX = 195;
 	public float elementLightX = 360;
@@ -188,14 +206,6 @@ public class TheBigProject extends PApplet {
 	public float elementY = 100;
 	public float elementResetX = 720;
 	public float elementResetY = 700;
-
-	// elementImageFire, elementImageLight, elememtImageWater, elementImageDark,
-	// elementImageEarth, elementImageLightning, elementImageWind,
-	// elementImageIce;
-
-	// --------------------------------------------------------//
-
-	// --------------------------------------------------------//
 
 	public String firstElement;
 	public String secondElement;
@@ -219,8 +229,23 @@ public class TheBigProject extends PApplet {
 	public boolean lightningElement = false;
 	public boolean initializeDamage = false;
 
+	// Variables for item upgrades
+	public String selectUpgrade = "";
+	public boolean swordUpgradeable = false;
+	public boolean axeUpgradeable = false;
+	public boolean scimitarUpgradeable = false;
+	public boolean helmUpgradeable = false;
+	public boolean chestUpgradeable = false;
+	public boolean pantsUpgradeable = false;
+	public boolean bootsUpgradeable = false;
+	public int helmMaterials = 5;
+	public int chestMaterials = 5;
+	public int pantsMaterials = 5;
+	public int bootsMaterials = 5;
+
 	public boolean loadWeapons = false;
 	public boolean initializeWeaponDamage = false;
+	public boolean loadInventory = false;
 
 	public void settings() {
 		size(1440, 900);
@@ -234,6 +259,7 @@ public class TheBigProject extends PApplet {
 		allSkeletons = new ArrayList<>();
 		allHounds = new ArrayList<>();
 		allMedusas = new ArrayList<>();
+		allScorpions = new ArrayList<>();
 		allProjectiles = new ArrayList<>();
 		psionicFont = createFont("Georgia", 20);
 		textFont = createFont("Georgia", 12);
@@ -263,7 +289,7 @@ public class TheBigProject extends PApplet {
 			animationWait = millis() + 500;
 		}
 		levels();
-		elementalDamage();
+		characterStats();
 		character();
 		drawEnemies();
 	}
@@ -276,23 +302,25 @@ public class TheBigProject extends PApplet {
 				resourceManager.soundFile.stop();
 			if (currentZone == "Forest") {
 				resourceManager.soundFile = resourceManager.forestMusic;
+				resourceManager.soundFile.amp(1f);
 				setPlayingMusic(true);
 			}
 
 			if (currentZone == "Desert") {
 				resourceManager.soundFile = resourceManager.desertMusic;
+				resourceManager.soundFile.amp(0.5f);
 				setPlayingMusic(true);
 			}
 			if (currentZone == "TraderHouse") {
 				resourceManager.soundFile = resourceManager.traderHouseMusic;
 				setPlayingMusic(true);
+				resourceManager.soundFile.amp(0.5f);
 			}
 			if (currentZone == "HauntedForest") {
 				resourceManager.soundFile = resourceManager.hauntedForestMusic;
 				setPlayingMusic(true);
+				resourceManager.soundFile.amp(0.5f);
 			}
-			resourceManager.soundFile.amp(0.5f);
-			println("speel");
 			resourceManager.soundFile.loop();
 		}
 	}
@@ -327,6 +355,7 @@ public class TheBigProject extends PApplet {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
 			}
 		}
+
 		for (EnemyPaladins temp : allPaladins) {
 			temp.displayPaladins();
 			temp.bowDamage(bowDamage);
@@ -368,7 +397,16 @@ public class TheBigProject extends PApplet {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
 			}
 		}
-
+		for (EnemyScorpions temp : allScorpions) {
+			temp.displayscorpions();
+			temp.bowDamage(bowDamage);
+			if (swordAttack == true) {
+				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+			}
+			if (attackDoubleA == true) {
+				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+			}
+		}
 	}
 
 	void clearEnemies() {
@@ -391,6 +429,9 @@ public class TheBigProject extends PApplet {
 		}
 		if (allProjectiles.size() > 0) {
 			allProjectiles.clear();
+		}
+		if (allScorpions.size() > 0) {
+			allScorpions.clear();
 		}
 
 	}
@@ -488,6 +529,36 @@ public class TheBigProject extends PApplet {
 		allSkeletons.add(Skeleton);
 	}
 
+	void createFirstScorpion(float scorpionPosX, float scorpionPosY) {
+		EnemyScorpions scorpion = new EnemyScorpions(this, scorpionPosX, scorpionPosY, "Right", scorpionHealth,
+				scorpionHealth, 2, psionicEssenceDropScorpion, 0, scorpionExp, dropLoot, true, false, false, true, "",
+				resourceManager.scorpionRightIdle);
+		allScorpions.add(scorpion);
+	}
+
+	void createSecondScorpion(float scorpionPosX, float scorpionPosY) {
+		EnemyScorpions scorpion = new EnemyScorpions(this, scorpionPosX, scorpionPosY, "Right", scorpionHealth,
+				scorpionHealth, 2, psionicEssenceDropScorpion, 0, scorpionExp, dropLoot, true, false, false, true, "",
+				resourceManager.scorpionRightIdle);
+		allScorpions.add(scorpion);
+	}
+
+	void createThirdScorpion(float scorpionPosX, float scorpionPosY) {
+		EnemyScorpions scorpion = new EnemyScorpions(this, scorpionPosX, scorpionPosY, "Right", scorpionHealth,
+				scorpionHealth, 2, psionicEssenceDropScorpion, 0, scorpionExp, dropLoot, true, false, false, true, "",
+				resourceManager.scorpionRightIdle);
+		allScorpions.add(scorpion);
+	}
+
+	void createFourthScorpion(float scorpionPosX, float scorpionPosY) {
+		EnemyScorpions scorpion = new EnemyScorpions(this, scorpionPosX, scorpionPosY, "Right", scorpionHealth,
+				scorpionHealth, 2, psionicEssenceDropScorpion, 0, scorpionExp, dropLoot, true, false, false, true, "",
+				resourceManager.scorpionRightIdle);
+		allScorpions.add(scorpion);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	void createFirstMedusa(float medusaX, float medusaY) {
 		EnemyMedusas medusa = new EnemyMedusas(this, medusaX, medusaY, "Right", medusaHealth, medusaHealth,
 				medusaMoveSpeed, psionicEssenceDropMedusa, 0, medusaExp, dropLoot, true, false, false, false, "",
@@ -516,9 +587,28 @@ public class TheBigProject extends PApplet {
 		allMedusas.add(medusa);
 	}
 
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 	void createFirstHound(float houndX, float houndY) {
+		EnemyHounds Hound = new EnemyHounds(this, houndX, houndY, "Right", houndHealth, houndHealth, houndMoveSpeed,
+				psionicEssenceDropHound, 0, houndExp, dropLoot, true, false, false, true, "",
+				resourceManager.houndLeftIdle);
+		allHounds.add(Hound);
+	}
+
+	void createSecondHound(float houndX, float houndY) {
+		EnemyHounds Hound = new EnemyHounds(this, houndX, houndY, "Right", houndHealth, houndHealth, houndMoveSpeed,
+				psionicEssenceDropHound, 0, houndExp, dropLoot, true, false, false, true, "",
+				resourceManager.houndLeftIdle);
+		allHounds.add(Hound);
+	}
+
+	void createThirdHound(float houndX, float houndY) {
+		EnemyHounds Hound = new EnemyHounds(this, houndX, houndY, "Right", houndHealth, houndHealth, houndMoveSpeed,
+				psionicEssenceDropHound, 0, houndExp, dropLoot, true, false, false, true, "",
+				resourceManager.houndLeftIdle);
+		allHounds.add(Hound);
+	}
+
+	void createFourthHound(float houndX, float houndY) {
 		EnemyHounds Hound = new EnemyHounds(this, houndX, houndY, "Right", houndHealth, houndHealth, houndMoveSpeed,
 				psionicEssenceDropHound, 0, houndExp, dropLoot, true, false, false, true, "",
 				resourceManager.houndLeftIdle);
@@ -545,31 +635,24 @@ public class TheBigProject extends PApplet {
 
 		if (millis() < timeOfDeath + 4000) {
 			fill(204, 0, 204);
-			text("Psionic Essence + ", posX - factorX3, posY - factorY);
-			text(psionicEssence, posX + factorX3, posY - factorY);
-			if (item == "Lance Knight Spear tip +") {
-				text(item, posX - factorX3 - 50, posY - factorY3);
-				text("1", posX + factorX3, posY - factorY3);
+			text("Psionic Essence +" + psionicEssence, posX - factorX3 - 50, posY - factorY);
+			if (item == "Lance Knight Spear tip") {
+				text(item + "+1", posX - factorX3 - 50, posY - factorY3);
 			}
-			if (item == "Medusa Hair +") {
-				text(item, posX, posY - factorY3);
-				text("1", posX + factorX, posY - factorY3);
+			if (item == "Medusa Hair") {
+				text(item + "+1", posX - factorX3 - 50, posY - factorY3);
 			}
-			if (item == "Skeleton Bone +") {
-				text(item, posX, posY - factorY3);
-				text("1", posX + factorX, posY - factorY3);
+			if (item == "Skeleton Bone") {
+				text(item + "+1", posX - factorX3 - 50, posY - factorY3);
 			}
-			if (item == "Paladin Armor Scraps +") {
-				text(item, posX, posY - factorY3);
-				text("1", posX + factorX, posY - factorY3);
+			if (item == "Paladin Armor Scraps") {
+				text(item + "+1", posX - factorX3 - 50, posY - factorY3);
 			}
-			if (item == "Scorpion Scale +") {
-				text(item, posX, posY - factorY3);
-				text("1", posX + factorX, posY - factorY3);
+			if (item == "Scorpion Scale") {
+				text(item + "+1", posX - factorX3 - 50, posY - factorY3);
 			}
-			if (item == "Hound Teeth +") {
-				text(item, posX, posY - 20);
-				text("1", posX + factorX, posY - factorY);
+			if (item == "Hound Teeth") {
+				text(item + "+1", posX - factorX3 - 50, posY - factorY3);
 			}
 		}
 
@@ -779,7 +862,6 @@ public class TheBigProject extends PApplet {
 			image(resourceManager.projectileSaber, arrowX, arrowY);
 		}
 		resourceManager.projectileSaber.play();
-
 	}
 
 	void bowAttackRight(int bowAttackDirectionRight) {
@@ -879,6 +961,10 @@ public class TheBigProject extends PApplet {
 		if (currentLevelNorth == -3 && currentLevelWest == 2 && currentZone == "Forest") {
 			forestZoneMinusThreeTwo();
 		}
+		if (currentLevelNorth == -4 && currentLevelWest == 1 && currentZone == "Forest") {
+			forestZoneMinusFourOne();
+		}
+
 		// Desert
 		if (currentLevelNorth == 1 && currentLevelWest == 0 && currentZone == "Desert") {
 			desertZoneOne();
@@ -898,6 +984,7 @@ public class TheBigProject extends PApplet {
 		}
 		if (currentLevelNorth == 2 && currentLevelWest == 0 && currentZone == "Desert") {
 			desertZoneTwoZero();
+			playMusic();
 		}
 		if (currentLevelNorth == 2 && currentLevelWest == 1 && currentZone == "Desert") {
 			desertZoneTwoOne();
@@ -928,6 +1015,7 @@ public class TheBigProject extends PApplet {
 		}
 		if (currentLevelNorth == 1 && currentLevelWest == -1 && currentZone == "HauntedForest") {
 			hauntedZoneOneMinusOne();
+			playMusic();
 
 		}
 		if (currentLevelNorth == 1 && currentLevelWest == -2 && currentZone == "HauntedForest") {
@@ -941,6 +1029,7 @@ public class TheBigProject extends PApplet {
 		}
 		if (currentLevelNorth == 2 && currentLevelWest == -1 && currentZone == "HauntedForest") {
 			hauntedZoneTwoMinusOne();
+			playMusic();
 		}
 		if (currentLevelNorth == 2 && currentLevelWest == -2 && currentZone == "HauntedForest") {
 			hauntedZoneTwoMinusTwo();
@@ -1227,6 +1316,18 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	void forestZoneMinusFourOne() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusFourOne.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			setLoadedMap(true);
+		}
+	}
+
 	// Desert
 	void desertZoneOne() {
 		if (!isLoadedMap()) {
@@ -1252,7 +1353,7 @@ public class TheBigProject extends PApplet {
 			}
 			createFirstSkeleton(350, 150);
 			createSecondSkeleton(250, 650);
-			createFirstMedusa(1150, 50);
+			createFirstScorpion(1150, 50);
 			setLoadedMap(true);
 		}
 	}
@@ -1268,7 +1369,7 @@ public class TheBigProject extends PApplet {
 			createFirstSkeleton(500, 600);
 			createSecondSkeleton(950, 100);
 			createThirdSkeleton(250, 200);
-			createFirstMedusa(1100, 650);
+			createFirstScorpion(1100, 650);
 			setLoadedMap(true);
 		}
 	}
@@ -1284,7 +1385,7 @@ public class TheBigProject extends PApplet {
 			createFirstSkeleton(1050, 650);
 			createSecondSkeleton(250, 500);
 			createThirdSkeleton(400, 100);
-			createFirstMedusa(1300, 150);
+			createFirstScorpion(1300, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1299,8 +1400,8 @@ public class TheBigProject extends PApplet {
 			}
 			createFirstSkeleton(200, 550);
 			createSecondSkeleton(1100, 650);
-			createFirstMedusa(400, 300);
-			createSecondMedusa(1100, 150);
+			createFirstScorpion(400, 300);
+			createSecondScorpion(1100, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1315,7 +1416,7 @@ public class TheBigProject extends PApplet {
 			}
 			createFirstSkeleton(1000, 300);
 			createSecondSkeleton(300, 300);
-			createFirstMedusa(350, 700);
+			createFirstScorpion(350, 700);
 			setLoadedMap(true);
 		}
 	}
@@ -1330,7 +1431,7 @@ public class TheBigProject extends PApplet {
 			}
 			createFirstSkeleton(400, 200);
 			createSecondSkeleton(100, 600);
-			createFirstMedusa(1300, 100);
+			createFirstScorpion(1300, 100);
 			setLoadedMap(true);
 		}
 	}
@@ -1344,8 +1445,8 @@ public class TheBigProject extends PApplet {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
 			createFirstSkeleton(250, 200);
-			createFirstMedusa(350, 650);
-			createSecondMedusa(950, 700);
+			createFirstScorpion(350, 650);
+			createSecondScorpion(950, 700);
 			setLoadedMap(true);
 		}
 		blackSmith();
@@ -1362,8 +1463,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstMedusa(300, 500);
-			createSecondMedusa(750, 700);
+			createFirstScorpion(300, 500);
+			createSecondScorpion(750, 700);
 			setLoadedMap(true);
 		}
 	}
@@ -1379,8 +1480,8 @@ public class TheBigProject extends PApplet {
 			createFirstSkeleton(500, 650);
 			createSecondSkeleton(700, 150);
 			createThirdSkeleton(1050, 450);
-			createFirstMedusa(250, 250);
-			createSecondMedusa(800, 550);
+			createFirstScorpion(250, 250);
+			createSecondScorpion(800, 550);
 			setLoadedMap(true);
 		}
 	}
@@ -1394,6 +1495,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(350, 150);
+			createFirstMedusa(1050, 650);
 			setLoadedMap(true);
 		}
 	}
@@ -1406,6 +1509,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(400, 500);
+			createFirstMedusa(950, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1418,6 +1523,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(950, 250);
+			createSecondHound(500, 750);
+			createFirstMedusa(500, 750);
 			setLoadedMap(true);
 		}
 	}
@@ -1430,6 +1538,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(250, 650);
+			createFirstMedusa(400, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1442,6 +1552,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(500, 700);
+			createSecondHound(350, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1454,6 +1566,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(300, 600);
+			createSecondHound(300, 200);
+			createFirstMedusa(750, 700);
 			setLoadedMap(true);
 		}
 	}
@@ -1466,6 +1581,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(800, 250);
+			createSecondHound(1100, 600);
+			createThirdHound(600, 750);
 			setLoadedMap(true);
 		}
 	}
@@ -1478,6 +1596,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(300, 750);
+			createSecondHound(1050, 300);
+			createFirstMedusa(400, 100);
 			setLoadedMap(true);
 		}
 	}
@@ -1490,6 +1611,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(650, 150);
+			createFirstMedusa(1050, 700);
 			setLoadedMap(true);
 		}
 	}
@@ -1502,6 +1625,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstHound(500, 750);
+			createFirstMedusa(350, 100);
+			createSecondMedusa(1100, 500);
 			setLoadedMap(true);
 		}
 	}
@@ -1514,7 +1640,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-
+			createFirstHound(700, 500);
+			createSecondHound(450, 200);
+			createFirstMedusa(1000, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1528,6 +1656,7 @@ public class TheBigProject extends PApplet {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
 			createFirstHound(600, 600);
+			createFirstMedusa(850, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1560,11 +1689,189 @@ public class TheBigProject extends PApplet {
 
 	// ---------------------------------------------------------------------------------------------------\\
 	// Elements and damage
-	void elementalDamage() {
+	void characterStats() {
 		elementSelection();
 		weaponSelection();
 		damageCalculator();
-		weaponDamageCalculator();
+		characterStatCalculator();
+		inventory();
+
+	}
+
+	void inventory() {
+		/*
+		 * public float elementWindX = 1135; public float elementIceX = 1290;
+		 */
+
+		if (loadInventory == true) {
+			fill(255);
+			image(resourceManager.scorpionScale, elementFireX, elementY);
+			text(scorpionScales, elementFireX, elementY + tileSize);
+			image(resourceManager.skeletonBone, elementLightX, elementY);
+			text(skeletonBones, elementLightX, elementY + tileSize);
+			image(resourceManager.medusaHair, elementWaterX, elementY);
+			text(medusaHair, elementWaterX, elementY + tileSize);
+			image(resourceManager.paladinArmorScrap, elementDarkX, elementY);
+			text(paladinArmorScraps, elementDarkX, elementY + tileSize);
+			image(resourceManager.lanceKnightSpearTip, elementEarthX, elementY);
+			text(lanceKnightSpearTips, elementEarthX, elementY + tileSize);
+			image(resourceManager.houndTooth, elementLightningX, elementY);
+			text(houndTeeth, elementLightningX, elementY + tileSize);
+		}
+	}
+
+	void loadMaterials() {
+		float materialSwordX = swordX + 30;
+		float textSpace = 30;
+		float materialAxeX = axeX;
+		float materialScimitarX = scimitarX;
+
+		float armorMaterialX = armorX + 30;
+		float helmMaterialOne = helmY;
+		float helmMaterialTwo = helmY + 30;
+		float chestMaterialOne = chestY;
+		float chestMaterialTwo = chestY + 30;
+		float pantsMaterialOne = pantsY;
+		float pantsMaterialTwo = pantsY + 30;
+		float bootsMaterialOne = bootsY;
+		float bootsMaterialTwo = bootsY + 30;
+
+		float materialYOne = weaponY + 60;
+		float materialYTwo = materialYOne + 30;
+		float materialYThree = materialYTwo + 30;
+		float materialYFour = materialYThree + 30;
+		textSize(15);
+
+		if (helmLevel <= 3) {
+			image(resourceManager.paladinArmorScrap, armorMaterialX, helmMaterialOne, 30, 30);
+			text(helmMaterials, armorMaterialX + textSpace, helmMaterialOne);
+			image(resourceManager.lanceKnightSpearTip, armorMaterialX, helmMaterialTwo, 30, 30);
+			text(helmMaterials, armorMaterialX + textSpace, helmMaterialTwo);
+		}
+		if (chestLevel <= 3) {
+			image(resourceManager.paladinArmorScrap, armorMaterialX, chestMaterialOne, 30, 30);
+			text(chestMaterials, armorMaterialX + textSpace, chestMaterialOne);
+			image(resourceManager.lanceKnightSpearTip, armorMaterialX, chestMaterialTwo, 30, 30);
+			text(chestMaterials, armorMaterialX + textSpace, chestMaterialTwo);
+		}
+		if (pantsLevel <= 3) {
+			image(resourceManager.paladinArmorScrap, armorMaterialX, pantsMaterialOne, 30, 30);
+			text(pantsMaterials, armorMaterialX + textSpace, pantsMaterialOne);
+			image(resourceManager.lanceKnightSpearTip, armorMaterialX, pantsMaterialTwo, 30, 30);
+			text(pantsMaterials, armorMaterialX + textSpace, pantsMaterialTwo);
+		}
+		if (bootsLevel <= 3) {
+			image(resourceManager.paladinArmorScrap, armorMaterialX, bootsMaterialOne, 30, 30);
+			text(bootsMaterials, armorMaterialX + textSpace, bootsMaterialOne);
+			image(resourceManager.lanceKnightSpearTip, armorMaterialX, bootsMaterialTwo, 30, 30);
+			text(bootsMaterials, armorMaterialX + textSpace, bootsMaterialTwo);
+		}
+
+		if (swordLevel == 1) {
+			image(resourceManager.paladinArmorScrap, materialSwordX, materialYOne, 30, 30);
+			text("5", materialSwordX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialSwordX, materialYTwo, 30, 30);
+			text("5", materialSwordX + textSpace, materialYTwo);
+		}
+
+		if (swordLevel == 2) {
+			image(resourceManager.paladinArmorScrap, materialSwordX, materialYOne, 30, 30);
+			text("5", materialSwordX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialSwordX, materialYTwo, 30, 30);
+			text("5", materialSwordX + textSpace, materialYTwo);
+			image(resourceManager.skeletonBone, materialSwordX, materialYThree, 30, 30);
+			text("1", materialSwordX + textSpace, materialYThree);
+		}
+
+		if (swordLevel == 3) {
+			image(resourceManager.paladinArmorScrap, materialSwordX, materialYOne, 30, 30);
+			text("10", materialSwordX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialSwordX, materialYTwo, 30, 30);
+			text("10", materialSwordX + textSpace, materialYTwo);
+			image(resourceManager.skeletonBone, materialSwordX, materialYThree, 30, 30);
+			text("5", materialSwordX + textSpace, materialYThree);
+		}
+
+		if (swordLevel == 4) {
+			image(resourceManager.paladinArmorScrap, materialSwordX, materialYOne, 30, 30);
+			text("15", materialSwordX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialSwordX, materialYTwo, 30, 30);
+			text("15", materialSwordX + textSpace, materialYTwo);
+			image(resourceManager.medusaHair, materialSwordX, materialYThree, 30, 30);
+			text("5", materialSwordX + textSpace, materialYThree);
+		}
+
+		if (swordLevel == 5) {
+			image(resourceManager.paladinArmorScrap, materialSwordX, materialYOne, 30, 30);
+			text("15", materialSwordX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialSwordX, materialYTwo, 30, 30);
+			text("15", materialSwordX + textSpace, materialYTwo);
+			image(resourceManager.houndTooth, materialSwordX, materialYThree, 30, 30);
+			text("5", materialSwordX + textSpace, materialYThree);
+		}
+
+		if (axeLevel == 1) {
+			image(resourceManager.paladinArmorScrap, materialAxeX, materialYOne, 30, 30);
+			text("5", materialAxeX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialAxeX, materialYTwo, 30, 30);
+			text("5", materialAxeX + textSpace, materialYTwo);
+		}
+
+		if (axeLevel == 2) {
+			image(resourceManager.paladinArmorScrap, materialAxeX, materialYOne, 30, 30);
+			text("10", materialAxeX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialAxeX, materialYTwo, 30, 30);
+			text("10", materialAxeX + textSpace, materialYTwo);
+			image(resourceManager.medusaHair, materialAxeX, materialYThree, 30, 30);
+			text("1", materialAxeX + textSpace, materialYThree);
+		}
+
+		if (axeLevel == 3) {
+			image(resourceManager.paladinArmorScrap, materialAxeX, materialYOne, 30, 30);
+			text("10", materialAxeX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialAxeX, materialYTwo, 30, 30);
+			text("10", materialAxeX + textSpace, materialYTwo);
+			image(resourceManager.medusaHair, materialAxeX, materialYThree, 30, 30);
+			text("5", materialAxeX + textSpace, materialYThree);
+		}
+
+		if (axeLevel == 4) {
+			image(resourceManager.paladinArmorScrap, materialAxeX, materialYOne, 30, 30);
+			text("15", materialAxeX + textSpace, materialYOne);
+			image(resourceManager.lanceKnightSpearTip, materialAxeX, materialYTwo, 30, 30);
+			text("15", materialAxeX + textSpace, materialYTwo);
+			image(resourceManager.medusaHair, materialAxeX, materialYThree, 30, 30);
+			text("5", materialAxeX + textSpace, materialYThree);
+			image(resourceManager.houndTooth, materialAxeX, materialYFour, 30, 30);
+			text("5", materialAxeX + textSpace, materialYFour);
+		}
+
+		if (scimitarLevel == 1) {
+			image(resourceManager.scorpionScale, materialScimitarX, materialYOne, 30, 30);
+			text("5", materialScimitarX + textSpace, materialYOne);
+			image(resourceManager.paladinArmorScrap, materialScimitarX, materialYTwo, 30, 30);
+			text("5", materialScimitarX + textSpace, materialYTwo);
+		}
+
+		if (scimitarLevel == 2) {
+			image(resourceManager.scorpionScale, materialScimitarX, materialYOne, 30, 30);
+			text("5", materialScimitarX + textSpace, materialYOne);
+			image(resourceManager.paladinArmorScrap, materialScimitarX, materialYTwo, 30, 30);
+			text("5", materialScimitarX + textSpace, materialYTwo);
+			image(resourceManager.houndTooth, materialScimitarX, materialYThree, 30, 30);
+			text("1", materialScimitarX + textSpace, materialYThree);
+		}
+
+		if (scimitarLevel == 3) {
+			image(resourceManager.scorpionScale, materialScimitarX, materialYOne, 30, 30);
+			text("10", materialScimitarX + textSpace, materialYOne);
+			image(resourceManager.paladinArmorScrap, materialScimitarX, materialYTwo, 30, 30);
+			text("10", materialScimitarX + textSpace, materialYTwo);
+			image(resourceManager.houndTooth, materialScimitarX, materialYThree, 30, 30);
+			text("5", materialScimitarX + textSpace, materialYThree);
+			image(resourceManager.medusaHair, materialScimitarX, materialYFour, 30, 30);
+			text("5", materialScimitarX + textSpace, materialYFour);
+		}
 
 	}
 
@@ -1617,6 +1924,70 @@ public class TheBigProject extends PApplet {
 			resourceManager.scimitarImage = resourceManager.scimitarFour;
 		}
 
+		if (helmLevel == 0) {
+			resourceManager.helmImage = resourceManager.helmOne;
+		}
+		if (helmLevel == 1) {
+			resourceManager.helmImage = resourceManager.helmTwo;
+		}
+		if (helmLevel == 2) {
+			resourceManager.helmImage = resourceManager.helmThree;
+		}
+		if (helmLevel == 3) {
+			resourceManager.helmImage = resourceManager.helmFour;
+		}
+		if (helmLevel == 4) {
+			resourceManager.helmImage = resourceManager.helmFive;
+		}
+
+		if (chestLevel == 0) {
+			resourceManager.chestImage = resourceManager.chestOne;
+		}
+		if (chestLevel == 1) {
+			resourceManager.chestImage = resourceManager.chestTwo;
+		}
+		if (chestLevel == 2) {
+			resourceManager.chestImage = resourceManager.chestThree;
+		}
+		if (chestLevel == 3) {
+			resourceManager.chestImage = resourceManager.chestFour;
+		}
+		if (chestLevel == 4) {
+			resourceManager.chestImage = resourceManager.chestFive;
+		}
+
+		if (pantsLevel == 0) {
+			resourceManager.pantsImage = resourceManager.pantsOne;
+		}
+		if (pantsLevel == 1) {
+			resourceManager.pantsImage = resourceManager.pantsTwo;
+		}
+		if (pantsLevel == 2) {
+			resourceManager.pantsImage = resourceManager.pantsThree;
+		}
+		if (pantsLevel == 3) {
+			resourceManager.pantsImage = resourceManager.pantsFour;
+		}
+		if (pantsLevel == 4) {
+			resourceManager.pantsImage = resourceManager.pantsFive;
+		}
+
+		if (bootsLevel == 0) {
+			resourceManager.bootsImage = resourceManager.bootsOne;
+		}
+		if (bootsLevel == 1) {
+			resourceManager.bootsImage = resourceManager.bootsTwo;
+		}
+		if (bootsLevel == 2) {
+			resourceManager.bootsImage = resourceManager.bootsThree;
+		}
+		if (bootsLevel == 3) {
+			resourceManager.bootsImage = resourceManager.bootsFour;
+		}
+		if (bootsLevel == 4) {
+			resourceManager.bootsImage = resourceManager.bootsFive;
+		}
+
 	}
 
 	void weaponSelection() {
@@ -1624,73 +1995,60 @@ public class TheBigProject extends PApplet {
 		if (weaponSelected == "Sword") {
 			if (swordLevel == 1) {
 				swordBonusDamage = 0.3f;
-				resourceManager.swordImage = resourceManager.swordOne;
 			}
 			if (swordLevel == 2) {
 				swordBonusDamage = 0.6f;
-				resourceManager.swordImage = resourceManager.swordTwo;
 			}
 			if (swordLevel == 3) {
 				swordBonusDamage = 0.9f;
-				resourceManager.swordImage = resourceManager.swordThree;
 			}
 
 			if (swordLevel == 4) {
 				swordBonusDamage = 1.2f;
-				resourceManager.swordImage = resourceManager.swordFour;
 			}
 			if (swordLevel == 5) {
 				swordBonusDamage = 1.5f;
-				resourceManager.swordImage = resourceManager.swordFive;
 			}
 			if (swordLevel == 6) {
 				swordBonusDamage = 1.8f;
-				resourceManager.swordImage = resourceManager.swordSix;
 			}
 		}
+
 		if (weaponSelected == "Axe") {
 			if (axeLevel == 1) {
 				axeBonusDamage = 0.3f;
 				axeBonusRange = 2;
-				resourceManager.axeImage = resourceManager.axeOne;
 			}
 			if (axeLevel == 2) {
 				axeBonusDamage = 0.5f;
 				axeBonusRange = 4;
-				resourceManager.axeImage = resourceManager.axeTwo;
 			}
 			if (axeLevel == 3) {
 				axeBonusDamage = 0.7f;
 				axeBonusRange = 6;
-				resourceManager.axeImage = resourceManager.axeThree;
 			}
 			if (axeLevel == 4) {
 				axeBonusDamage = 0.9f;
 				axeBonusRange = 8;
-				resourceManager.axeImage = resourceManager.axeFour;
 			}
 			if (axeLevel == 5) {
 				axeBonusDamage = 1.3f;
 				axeBonusRange = 10;
-				resourceManager.axeImage = resourceManager.axeFive;
 			}
 		}
+
 		if (weaponSelected == "Scimitar") {
 			if (scimitarLevel == 1) {
 				scimitarBonusDamage += 10f;
-				resourceManager.scimitarImage = resourceManager.scimitarOne;
 			}
 			if (scimitarLevel == 3) {
 				scimitarBonusDamage += 20f;
-				resourceManager.scimitarImage = resourceManager.scimitarTwo;
 			}
 			if (scimitarLevel == 3) {
 				scimitarBonusDamage += 30f;
-				resourceManager.scimitarImage = resourceManager.scimitarThree;
 			}
 			if (scimitarLevel == 4) {
 				scimitarBonusDamage += 40f;
-				resourceManager.scimitarImage = resourceManager.scimitarFour;
 			}
 		}
 
@@ -1698,6 +2056,14 @@ public class TheBigProject extends PApplet {
 			image(resourceManager.swordImage, swordX, weaponY);
 			image(resourceManager.axeImage, axeX, weaponY);
 			image(resourceManager.scimitarImage, scimitarX, weaponY);
+			image(resourceManager.helmImage, armorX, helmY);
+			image(resourceManager.chestImage, armorX, chestY);
+			image(resourceManager.pantsImage, armorX, pantsY);
+			image(resourceManager.bootsImage, armorX, bootsY);
+
+			if (openShop == true) {
+				loadMaterials();
+			}
 			if (openShop == false) {
 				if (weaponSelected == "Sword") {
 					image(resourceManager.elementSelectedImage, swordX, weaponY, 100, 100);
@@ -1707,28 +2073,28 @@ public class TheBigProject extends PApplet {
 				}
 				if (weaponSelected == "Scimitar") {
 					image(resourceManager.elementSelectedImage, scimitarX, weaponY, 100, 100);
-
 				}
 			}
 		}
 	}
 
-	void weaponDamageCalculator() {
+	void characterStatCalculator() {
 		if (initializeWeaponDamage == true) {
-			resetWeaponValues();
+			resetCharacterStats();
 			if (weaponSelected == "Sword") {
 				baseDamage += swordBonusDamage;
-				println(baseDamage);
 			}
 			if (weaponSelected == "Axe") {
 				swordSize += axeBonusRange;
 				baseDamage += axeBonusDamage;
-				println(baseDamage);
 			}
 			if (weaponSelected == "Scimitar") {
 				baseBowDamage += scimitarBonusDamage;
-				println(baseBowDamage);
 			}
+			healthBonus = (helmLevel * 25) + (chestLevel * 25) + (pantsLevel * 25) + (bootsLevel * 25);
+			characterMaxHealth += healthBonus;
+			characterHealth += healthBonus;
+
 			initializeWeaponDamage = false;
 		}
 	}
@@ -1770,7 +2136,7 @@ public class TheBigProject extends PApplet {
 			}
 			// Water does nothing so far
 			if (firstElement == "Water" || secondElement == "Water") {
-				waterElement = true;
+				dropRate = 20;
 			}
 			initializeDamage = false;
 		}
@@ -1832,9 +2198,12 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
-	void resetWeaponValues() {
+	void resetCharacterStats() {
 		baseDamage = 5;
 		bowDamage = 50;
+		characterHealth = 100;
+		healthBonus = 0;
+		characterMaxHealth = 100;
 	}
 
 	void resetDamageValues() {
@@ -1887,13 +2256,70 @@ public class TheBigProject extends PApplet {
 		}
 		// Weapon selection
 		if (loadWeapons == true) {
+			if (dist(mouseX, mouseY, armorX, helmY) < 50) {
+				if (openShop == true && helmLevel < 5) {
+					upgradeWeapons();
+					selectUpgrade = "Helm";
+					if (helmUpgradeable == true) {
+						helmLevel++;
+						reduceMaterials();
+						initializeWeaponDamage = true;
+					}
+				}
+			}
+			if (loadWeapons == true) {
+				if (dist(mouseX, mouseY, armorX, chestY) < 50) {
+					if (openShop == true && chestLevel < 5) {
+						upgradeWeapons();
+						selectUpgrade = "Chest";
+						if (chestUpgradeable == true) {
+							chestLevel++;
+							reduceMaterials();
+							initializeWeaponDamage = true;
+						}
+					}
+				}
+			}
+			if (loadWeapons == true) {
+				if (dist(mouseX, mouseY, armorX, pantsY) < 50) {
+					if (openShop == true && pantsLevel < 5) {
+						upgradeWeapons();
+						selectUpgrade = "Pants";
+						if (pantsUpgradeable == true) {
+							pantsLevel++;
+							reduceMaterials();
+							initializeWeaponDamage = true;
+						}
+					}
+				}
+			}
+			if (loadWeapons == true) {
+				if (dist(mouseX, mouseY, armorX, bootsY) < 50) {
+					if (openShop == true && bootsLevel < 5) {
+						upgradeWeapons();
+						selectUpgrade = "Boots";
+						if (bootsUpgradeable == true) {
+							bootsLevel++;
+							reduceMaterials();
+							initializeWeaponDamage = true;
+						}
+					}
+				}
+			}
+
 			if (dist(mouseX, mouseY, swordX, weaponY) < 50) {
 				if (openShop == false && weaponSelected != "Sword") {
 					weaponSelected = "Sword";
 					initializeWeaponDamage = true;
 				}
 				if (openShop == true && swordLevel < 6) {
-					swordLevel++;
+					upgradeWeapons();
+					selectUpgrade = "Sword";
+					if (swordUpgradeable == true) {
+						swordLevel++;
+						reduceMaterials();
+						initializeWeaponDamage = true;
+					}
 				}
 			}
 			if (dist(mouseX, mouseY, axeX, weaponY) < 50) {
@@ -1902,7 +2328,13 @@ public class TheBigProject extends PApplet {
 					initializeWeaponDamage = true;
 				}
 				if (openShop == true && axeLevel < 5) {
-					axeLevel++;
+					upgradeWeapons();
+					selectUpgrade = "Axe";
+					if (axeUpgradeable == true) {
+						axeLevel++;
+						reduceMaterials();
+						initializeWeaponDamage = true;
+					}
 				}
 			}
 			if (dist(mouseX, mouseY, scimitarX, weaponY) < 50) {
@@ -1911,7 +2343,13 @@ public class TheBigProject extends PApplet {
 					initializeWeaponDamage = true;
 				}
 				if (openShop == true && scimitarLevel < 4) {
-					scimitarLevel++;
+					upgradeWeapons();
+					selectUpgrade = "Scimitar";
+					if (scimitarUpgradeable == true) {
+						scimitarLevel++;
+						reduceMaterials();
+						initializeWeaponDamage = true;
+					}
 				}
 
 			}
@@ -2064,9 +2502,164 @@ public class TheBigProject extends PApplet {
 		if (openShop == true && action == false) {
 			openShop = false;
 			loadWeapons = false;
-			println("sluit shop");
 			currentText = 0;
 		}
+	}
+
+	void reduceMaterials() {
+		if (selectUpgrade == "Sword") {
+			if (swordLevel == 1) {
+				paladinArmorScraps -= 5;
+				lanceKnightSpearTips -= 5;
+			}
+			if (swordLevel == 2) {
+				paladinArmorScraps -= 5;
+				lanceKnightSpearTips -= 5;
+				skeletonBones -= 1;
+			}
+			if (swordLevel == 3) {
+				paladinArmorScraps -= 10;
+				lanceKnightSpearTips -= 10;
+				skeletonBones -= 5;
+			}
+			if (swordLevel == 4) {
+				paladinArmorScraps -= 15;
+				lanceKnightSpearTips -= 15;
+				medusaHair -= 5;
+			}
+			if (swordLevel == 5) {
+				paladinArmorScraps -= 15;
+				lanceKnightSpearTips -= 15;
+				houndTeeth -= 5;
+			}
+		}
+		if (selectUpgrade == "Axe") {
+			if (axeLevel == 1) {
+				paladinArmorScraps -= 5;
+				lanceKnightSpearTips -= 5;
+			}
+			if (axeLevel == 2) {
+				paladinArmorScraps -= 10;
+				lanceKnightSpearTips -= 10;
+				medusaHair -= 1;
+			}
+			if (axeLevel == 3) {
+				paladinArmorScraps -= 10;
+				lanceKnightSpearTips -= 10;
+				medusaHair -= 5;
+			}
+			if (axeLevel == 4) {
+				paladinArmorScraps -= 15;
+				lanceKnightSpearTips -= 15;
+				medusaHair -= 5;
+				houndTeeth -= 5;
+			}
+		}
+		if (selectUpgrade == "Scimitar") {
+			if (scimitarLevel == 1) {
+				scorpionScales -= 5;
+				paladinArmorScraps -= 5;
+			}
+			if (scimitarLevel == 2) {
+				scorpionScales -= 5;
+				paladinArmorScraps -= 5;
+				houndTeeth -= 5;
+			}
+			if (scimitarLevel == 3) {
+				scorpionScales -= 10;
+				paladinArmorScraps -= 10;
+				houndTeeth -= 5;
+				medusaHair -= 5;
+			}
+		}
+
+		if (selectUpgrade == "Helm") {
+			paladinArmorScraps -= helmMaterials;
+			lanceKnightSpearTips -= helmMaterials;
+			helmMaterials += 5;
+		}
+		if (selectUpgrade == "Chest") {
+			paladinArmorScraps -= chestMaterials;
+			lanceKnightSpearTips -= chestMaterials;
+			chestMaterials += 5;
+		}
+		if (selectUpgrade == "Pants") {
+			paladinArmorScraps -= pantsMaterials;
+			lanceKnightSpearTips -= pantsMaterials;
+			pantsMaterials += 5;
+		}
+		if (selectUpgrade == "Boots") {
+			paladinArmorScraps -= bootsMaterials;
+			lanceKnightSpearTips -= bootsMaterials;
+			bootsMaterials += 5;
+		}
+
+		helmUpgradeable = false;
+		chestUpgradeable = false;
+		pantsUpgradeable = false;
+		bootsUpgradeable = false;
+		swordUpgradeable = false;
+		scimitarUpgradeable = false;
+		axeUpgradeable = false;
+	}
+
+	void upgradeWeapons() {
+		if (swordLevel == 1 && paladinArmorScraps >= 5 && lanceKnightSpearTips >= 5) {
+			swordUpgradeable = true;
+		}
+		if (swordLevel == 2 && paladinArmorScraps >= 5 && lanceKnightSpearTips >= 5 && skeletonBones >= 1) {
+			swordUpgradeable = true;
+		}
+		if (swordLevel == 3 && paladinArmorScraps >= 10 && lanceKnightSpearTips >= 10 && skeletonBones >= 5) {
+			swordUpgradeable = true;
+		}
+		if (swordLevel == 4 && paladinArmorScraps >= 15 && lanceKnightSpearTips >= 15 && medusaHair >= 5) {
+			swordUpgradeable = true;
+		}
+		if (swordLevel == 5 && paladinArmorScraps >= 15 && lanceKnightSpearTips >= 15 && houndTeeth >= 5) {
+			swordUpgradeable = true;
+		}
+
+		if (axeLevel == 1 && paladinArmorScraps >= 5 && lanceKnightSpearTips >= 5) {
+			axeUpgradeable = true;
+		}
+		if (axeLevel == 2 && paladinArmorScraps >= 10 && lanceKnightSpearTips >= 10 && medusaHair >= 1) {
+			axeUpgradeable = true;
+		}
+		if (axeLevel == 3 && paladinArmorScraps >= 10 && lanceKnightSpearTips >= 10 && medusaHair >= 5) {
+			axeUpgradeable = true;
+		}
+		if (axeLevel == 4 && paladinArmorScraps >= 15 && lanceKnightSpearTips >= 15 && medusaHair >= 5
+				&& houndTeeth >= 5) {
+			axeUpgradeable = true;
+		}
+
+		if (scimitarLevel == 1 && scorpionScales >= 5 && paladinArmorScraps >= 5) {
+			scimitarUpgradeable = true;
+		}
+		if (scimitarLevel == 2 && scorpionScales >= 5 && paladinArmorScraps >= 5 && houndTeeth >= 1) {
+			scimitarUpgradeable = true;
+		}
+		if (scimitarLevel == 3 && scorpionScales >= 10 && paladinArmorScraps >= 10 && houndTeeth >= 5
+				&& medusaHair >= 5) {
+			scimitarUpgradeable = true;
+		}
+
+		// Armor upgrades //
+
+		if (helmLevel <= 4 && paladinArmorScraps >= helmMaterials && lanceKnightSpearTips >= helmMaterials) {
+			helmUpgradeable = true;
+		}
+		if (chestLevel <= 4 && paladinArmorScraps >= chestMaterials && lanceKnightSpearTips >= chestMaterials) {
+			chestUpgradeable = true;
+		}
+		if (pantsLevel <= 4 && paladinArmorScraps >= pantsMaterials && lanceKnightSpearTips >= pantsMaterials) {
+			pantsUpgradeable = true;
+		}
+		if (bootsLevel <= 4 && paladinArmorScraps >= bootsMaterials && lanceKnightSpearTips >= bootsMaterials) {
+			bootsUpgradeable = true;
+		}
+
 	}
 
 	// Old man
@@ -2260,6 +2853,18 @@ public class TheBigProject extends PApplet {
 			} else if (loadElements == false) {
 				loadElements = true;
 				loadWeapons = false;
+				loadInventory = false;
+			}
+		}
+
+		if (key == 'i') {
+			action = false;
+			if (loadInventory == true) {
+				loadInventory = false;
+			} else if (loadInventory == false) {
+				loadInventory = true;
+				loadElements = false;
+				loadWeapons = false;
 			}
 		}
 
@@ -2267,9 +2872,11 @@ public class TheBigProject extends PApplet {
 			action = false;
 			if (loadWeapons == true) {
 				loadWeapons = false;
+				loadInventory = false;
 			} else if (loadWeapons == false) {
 				loadWeapons = true;
 				loadElements = false;
+				loadInventory = false;
 			}
 		}
 
@@ -2321,7 +2928,8 @@ public class TheBigProject extends PApplet {
 				if (overlap.getSurface() > 0) {
 					if (overlap.getType() == 'W' || overlap.getType() == 'T' || overlap.getType() == 'a'
 							|| overlap.getType() == 'b' || overlap.getType() == 'c' || overlap.getType() == 'B'
-							|| overlap.getType() == 'Z' || overlap.getType() == 'X' || overlap.getType() == 'C') {
+							|| overlap.getType() == 'Z' || overlap.getType() == 'X' || overlap.getType() == 'C'
+							|| overlap.getType() == 'L') {
 						validTile = false;
 					}
 				}

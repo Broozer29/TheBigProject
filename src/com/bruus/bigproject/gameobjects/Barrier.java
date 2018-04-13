@@ -11,6 +11,9 @@ public class Barrier extends GameObject {
 		    else if (mainApplet.currentZone == "Desert"){
 		    	img = mainApplet.resourceManager.DesertGround;
 		    }
+		    else if (mainApplet.currentZone == "City"){
+		    	img = mainApplet.resourceManager.cityGrass;
+		    }
 		    else img = mainApplet.resourceManager.grassImage;
 		  }
 		  public String toString()
