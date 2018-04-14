@@ -8,7 +8,7 @@ import processing.core.PImage;
 import processing.sound.SoundFile;
 
 public class ResourceManager {
-	public SoundFile hauntedForestMusic, desertMusic, forestMusic, squareMusic, traderHouseMusic, soundFile;
+	public SoundFile hauntedForestMusic, desertMusic, forestMusic, squareMusic, traderHouseMusic, cityMusic, soundFile;
 	public Gif currentAnimation, walkingRight, walkingLeft, lookingLeft, lookingRight, lookingUp, lookingDown,
 			attackLeft, attackRight, attackBowLeft, attackBowRight, projectileRight, projectileLeft, projectileSaber;
 	public Gif saberDoubleALeft, saberDoubleARight, saberMeleeRangedLeft, saberMeleeRangedRight;
@@ -51,14 +51,13 @@ public class ResourceManager {
 	public PImage chestImage, chestOne, chestTwo, chestThree, chestFour, chestFive;
 	public PImage pantsImage, pantsOne, pantsTwo, pantsThree, pantsFour, pantsFive;
 	public PImage bootsImage, bootsOne, bootsTwo, bootsThree, bootsFour, bootsFive;
-	public PImage blacksmithHouse;
+	public PImage blacksmithHouse, cityHouseOne, cityHouseTwo, cityHouseThree, cityHouseLarge, cityShop;
 	public PImage scorpionScale, medusaHair, houndTooth, skeletonBone, paladinArmorScrap, lanceKnightSpearTip;
-	public PImage cityGrass, cityRoadWest, cityRoadNorth, cityRoadRightTopCorner, cityRoadRightBotCorner, cityRoadLeftTopCorner, cityRoadLeftBotCorner, cityTree;
-
+	public PImage cityGrass, cityRoad, cityTrees;
 	private String baseFolder = new File("bin").getAbsolutePath();
 
 	public void loadImages(PApplet myApplet) {
-		//blackSmith = new Gif(myApplet, baseFolder + "/Loading_Images/SmithAnimation.gif");
+		blackSmith = new Gif(myApplet, baseFolder + "/Loading_Images/SmithAnimation.gif");
 		blacksmithHouse = myApplet.loadImage(baseFolder + "/Loading_Images/BlackSmithHouse.png");
 
 		// Character //
@@ -70,10 +69,10 @@ public class ResourceManager {
 
 		attackRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRightAttack.gif");
 		attackLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberAttackLeft.gif");
-		//saberDoubleARight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleARight.gif");
-		//saberDoubleALeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleALeft.gif");
-		//saberMeleeRangedLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackLeft.gif");
-		//saberMeleeRangedRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackRight.gif");
+		saberDoubleARight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleARight.gif");
+		saberDoubleALeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDoubleALeft.gif");
+		saberMeleeRangedLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackLeft.gif");
+		saberMeleeRangedRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackRight.gif");
 		attackBowLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRangedAttackLeft.gif");
 		attackBowRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRangedAttackRight.gif");
 
@@ -142,26 +141,14 @@ public class ResourceManager {
 		chestImage = chestOne;
 		pantsImage = pantsOne;
 		bootsImage = bootsOne;
-		// Old dude //
 
-		/*
-		 * oldDudeLeft = myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingLeft.png"); oldDudeRight =
-		 * myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingRight.png"); oldDudeUp =
-		 * myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingUp.png"); oldDudeDown =
-		 * myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingDown.png"); oldDudeRightUp =
-		 * myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingRightUp.png");
-		 * oldDudeRightDown = myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingRightDown.png"); oldDudeLeftUp
-		 * = myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingLeftUp.png"); oldDudeLeftDown
-		 * = myApplet.loadImage(baseFolder +
-		 * "/Loading_Images/OldDude/OldDudeLookingLeftDown.png");
-		 */
+		cityHouseOne = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House1.png");
+		cityHouseTwo = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House2.png");
+		cityHouseThree = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House4.png");
+		cityHouseLarge = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House3.png");
+		cityShop = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/Shop.png");
+		
+		// Old dude //
 		oldDudePurchase = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/oldDudePurchase.gif");
 		oldDudeIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/OldDudeIdleLeft.gif");
 		oldDudeIdleRight = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/OldDudeIdleRight.gif");
@@ -248,17 +235,12 @@ public class ResourceManager {
 		DesertStoneOne = myApplet.loadImage(baseFolder + "/Loading_Images/DesertStone1.png");
 		DesertStoneTwo = myApplet.loadImage(baseFolder + "/Loading_Images/DesertStone2.png");
 		DesertStoneThree = myApplet.loadImage(baseFolder + "/Loading_Images/DesertStone3.png");
-		
+
 		// City Tiles //
-		cityGrass = myApplet.loadImage(baseFolder + "/Loading_Images/City/CityGround.png");
-		cityRoadNorth = myApplet.loadImage(baseFolder + "/Loading_Images/City/RoadTileNorth.png");
-		cityRoadWest = myApplet.loadImage(baseFolder + "/Loading_Images/City/RoadTileWest.png");
-		cityTree = myApplet.loadImage(baseFolder + "/Loading_Images/City/CityTreeLarger.png");
-		cityRoadRightTopCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadRightTopCorner"); 
-		cityRoadRightBotCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadRightBotCorner"); 
-		cityRoadLeftTopCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadLeftTopCorner"); 
-		cityRoadLeftBotCorner = myApplet.loadImage(baseFolder + "Loading_Images/City/cityRoadLeftBotCorner"); 
-		
+		cityGrass = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/CityGrass.png");
+		cityRoad = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/CityRoad.png");
+		cityTrees = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/CityTree.png");
+
 		// Elements //
 		elementImageFire = myApplet.loadImage(baseFolder + "/Loading_Images/ElementsFire.png");
 		elementImageLight = myApplet.loadImage(baseFolder + "/Loading_Images/ElementsLight.png");
@@ -273,6 +255,7 @@ public class ResourceManager {
 	}
 
 	public void loadMusic(PApplet myApplet) {
+		cityMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/City.mp3");
 		forestMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/Forest.mp3");
 		squareMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/ProleteR - Faidherbe square.mp3");
 		desertMusic = new SoundFile(myApplet, baseFolder + "/Music_Folder/Desert.mp3");

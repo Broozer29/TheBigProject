@@ -8,14 +8,9 @@ import java.util.ArrayList;
 
 import com.bruus.bigproject.TheBigProject;
 import com.bruus.bigproject.gameobjects.Barrier;
-import com.bruus.bigproject.gameobjects.CityCornerBotLeft;
-import com.bruus.bigproject.gameobjects.CityCornerBotRight;
-import com.bruus.bigproject.gameobjects.CityCornerTopLeft;
-import com.bruus.bigproject.gameobjects.CityCornerTopRight;
 import com.bruus.bigproject.gameobjects.CityGrass;
-import com.bruus.bigproject.gameobjects.CityRoadNorth;
-import com.bruus.bigproject.gameobjects.CityRoadWest;
 import com.bruus.bigproject.gameobjects.CityTree;
+import com.bruus.bigproject.gameobjects.CityRoad;
 import com.bruus.bigproject.gameobjects.DesertGround;
 import com.bruus.bigproject.gameobjects.DesertStoneOne;
 import com.bruus.bigproject.gameobjects.DesertStoneThree;
@@ -83,20 +78,10 @@ public class MapLoader { // <>//
 
 				else if (tileType == 'L')
 					result.add(new CityTree(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'M')
-					result.add(new CityRoadNorth(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'N')
-					result.add(new CityRoadWest(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'U')
-					result.add(new CityCornerTopLeft(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'H')
-					result.add(new CityCornerTopRight(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'J')
-					result.add(new CityCornerBotRight(theBigProject, x * 50, y * 50, 50, 50));
-				else if (tileType == 'K')
-					result.add(new CityCornerBotLeft(theBigProject, x * 50, y * 50, 50, 50));
 				else if (tileType == 'V')
 					result.add(new CityGrass(theBigProject, x * 50, y * 50, 50, 50));
+				else if (tileType == 'M')
+					result.add(new CityRoad(theBigProject, x * 50, y * 50, 50, 50));
 				else
 					System.out.println("Ignored " + tileType);
 			}

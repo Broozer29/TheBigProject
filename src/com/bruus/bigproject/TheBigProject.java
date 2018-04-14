@@ -273,9 +273,6 @@ public class TheBigProject extends PApplet {
 		characterY = screenHeight / 2;
 		currentLevelNorth = 0;
 		currentLevelWest = 0;
-
-		// frameRate(20);
-
 	}
 
 	public void draw() {
@@ -318,6 +315,11 @@ public class TheBigProject extends PApplet {
 			}
 			if (currentZone == "HauntedForest") {
 				resourceManager.soundFile = resourceManager.hauntedForestMusic;
+				setPlayingMusic(true);
+				resourceManager.soundFile.amp(0.5f);
+			}
+			if (currentZone == "City") {
+				resourceManager.soundFile = resourceManager.cityMusic;
 				setPlayingMusic(true);
 				resourceManager.soundFile.amp(0.5f);
 			}
@@ -903,7 +905,6 @@ public class TheBigProject extends PApplet {
 		}
 		arrowDirection = "left";
 		arrowX = characterX - bowAttackDirectionLeft;
-		println(arrowX, arrowDirection);
 	}
 
 	void keepCounting() {
@@ -963,6 +964,18 @@ public class TheBigProject extends PApplet {
 		}
 		if (currentLevelNorth == -4 && currentLevelWest == 1 && currentZone == "Forest") {
 			forestZoneMinusFourOne();
+			playMusic();
+		}
+
+		if (currentLevelNorth == -5 && currentLevelWest == 1 && currentZone == "City") {
+			cityZoneMinusFiveOne();
+			playMusic();
+		}
+		if (currentLevelNorth == -5 && currentLevelWest == 2 && currentZone == "City") {
+			cityZoneMinusFiveTwo();
+		}
+		if (currentLevelNorth == -5 && currentLevelWest == 3 && currentZone == "City") {
+			cityZoneMinusFiveThree();
 		}
 
 		// Desert
@@ -1098,7 +1111,11 @@ public class TheBigProject extends PApplet {
 				setPlayingMusic(false);
 				currentZone = "Desert";
 			}
-
+			if (currentLevelNorth == -5 && currentLevelWest == 1 && currentZone == "City") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "Forest";
+			}
 			currentLevelNorth++;
 			characterY = screenHeight;
 			clearEnemies();
@@ -1110,6 +1127,11 @@ public class TheBigProject extends PApplet {
 				resourceManager.soundFile.stop();
 				setPlayingMusic(false);
 				currentZone = "Forest";
+			}
+			if (currentLevelNorth == -4 && currentLevelWest == 1 && currentZone == "Forest") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "City";
 			}
 			currentLevelNorth--;
 			characterY = 0;
@@ -1141,6 +1163,61 @@ public class TheBigProject extends PApplet {
 		}
 
 		image(resourceManager.traderHouse, locationTradeHouseX, locationTradeHouseY, 300, 300);
+	}
+
+	// City
+	void cityZoneMinusFiveOne() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/CityZones/CityMinusFiveOne.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			setLoadedMap(true);
+		}
+		image(resourceManager.cityHouseLarge, 275, 150);
+		image(resourceManager.cityHouseOne, 925, 125);
+		image(resourceManager.cityHouseOne, 1125, 125);
+		image(resourceManager.cityHouseOne, 1325 , 125);
+		image(resourceManager.cityHouseTwo, 925, 325);
+		image(resourceManager.cityHouseTwo, 1125, 325);
+		image(resourceManager.cityHouseTwo, 1325, 325);
+	}
+
+	void cityZoneMinusFiveTwo() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/CityZones/CityMinusFiveTwo.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			setLoadedMap(true);
+		}
+		image(resourceManager.cityShop, 675, 625);
+		image(resourceManager.cityHouseThree, 275, 125);
+		image(resourceManager.cityHouseThree, 425, 125);
+		image(resourceManager.cityHouseThree, 575, 125);
+		image(resourceManager.cityHouseThree, 725, 125);
+		image(resourceManager.cityHouseThree, 875, 125);
+		image(resourceManager.cityHouseThree, 1025, 125);
+		image(resourceManager.cityHouseThree, 1175, 125);
+	}
+
+	void cityZoneMinusFiveThree() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/CityZones/CityMinusFiveThree.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			setLoadedMap(true);
+		}
+		image(resourceManager.cityHouseOne, 625, 175);
+		image(resourceManager.cityHouseTwo, 825, 175);
+		image(resourceManager.cityHouseLarge, 325, 450);
 	}
 
 	// Forest
