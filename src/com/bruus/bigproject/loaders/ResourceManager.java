@@ -31,6 +31,10 @@ public class ResourceManager {
 
 	public Gif oldDudeImage, oldDudePurchase, oldDudeIdleLeft, oldDudeIdleRight;
 	public Gif blackSmith;
+	public Gif boyIdleLeft, boyIdleRight, boyWalkLeft, boyWalkRight;
+	public Gif girlIdleLeft, girlIdleRight, girlWalkLeft, girlWalkRight;
+	public Gif manIdleLeft, manIdleRight, manWalkLeft, manWalkRight;
+	public Gif womanIdleLeft, womanIdleRight, womanWalkLeft, womanWalkRight;
 
 	/*
 	 * public PImage oldDudeImage, oldDudeLeft, oldDudeRight, oldDudeUp,
@@ -57,6 +61,7 @@ public class ResourceManager {
 	private String baseFolder = new File("bin").getAbsolutePath();
 
 	public void loadImages(PApplet myApplet) {
+		// Blacksmith //
 		blackSmith = new Gif(myApplet, baseFolder + "/Loading_Images/SmithAnimation.gif");
 		blacksmithHouse = myApplet.loadImage(baseFolder + "/Loading_Images/BlackSmithHouse.png");
 
@@ -147,7 +152,7 @@ public class ResourceManager {
 		cityHouseThree = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House4.png");
 		cityHouseLarge = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House3.png");
 		cityShop = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/Shop.png");
-		
+
 		// Old dude //
 		oldDudePurchase = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/oldDudePurchase.gif");
 		oldDudeIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/OldDudeIdleLeft.gif");
@@ -189,18 +194,12 @@ public class ResourceManager {
 		paladinRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/PaladinWalkRight.gif");
 
 		// Skeletons //
-		skeletonRightIdle = new Gif(myApplet,
-				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonIdleRight.gif");
-		skeletonLeftIdle = new Gif(myApplet,
-				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonIdleLeft.gif");
-		skeletonLeftAttack = new Gif(myApplet,
-				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonAttackLeft.gif");
-		skeletonRightAttack = new Gif(myApplet,
-				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonAttackRight.gif");
-		skeletonRightWalk = new Gif(myApplet,
-				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonWalkRight.gif");
-		skeletonLeftWalk = new Gif(myApplet,
-				"/Users/bruusriezebos/Git/TheBigProject/resources/Loading_Images/Skeleton/SkeletonWalkLeft.gif");
+		skeletonRightIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Skeleton/SkeletonIdleRight.gif");
+		skeletonLeftIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Skeleton/SkeletonIdleLeft.gif");
+		skeletonLeftAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Skeleton/SkeletonAttackLeft.gif");
+		skeletonRightAttack = new Gif(myApplet, baseFolder + "/Loading_Images/Skeleton/SkeletonAttackRight.gif");
+		skeletonRightWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Skeleton/SkeletonWalkRight.gif");
+		skeletonLeftWalk = new Gif(myApplet, baseFolder + "/Loading_Images/Skeleton/SkeletonWalkLeft.gif");
 
 		// Scorpions //
 		scorpionLeftIdle = new Gif(myApplet, baseFolder + "/Loading_Images/Scorpion/ScorpionIdleLeft.gif");
@@ -216,6 +215,27 @@ public class ResourceManager {
 		chestClosed = new Gif(myApplet, baseFolder + "/Loading_Images/ChestClosed.gif");
 		fireBurning = new Gif(myApplet, baseFolder + "/Loading_Images/Burning.gif");
 
+		// Citizens //
+		boyIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Boy/BoyIdleLeft.gif");
+		boyIdleRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Boy/BoyIdleRight.gif");
+		boyWalkLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Boy/BoyWalkLeft.gif");
+		boyWalkRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Boy/BoyWalkRight.gif");
+		
+		girlIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Girl/GirlIdleLeft.gif");
+		girlIdleRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Girl/GirlIdleRight.gif");
+		girlWalkLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Girl/GirlWalkLeft.gif");
+		girlWalkRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Girl/GirlWalkRight.gif");
+		
+		manIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Man/ManIdleLeft.gif");
+		manIdleRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Man/ManIdleRight.gif");
+		manWalkLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Man/ManWalkLeft.gif");
+		manWalkRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Man/ManWalkRight.gif");
+		
+		womanIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Woman/WomanIdleLeft.gif");
+		womanIdleRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Woman/WomanIdleRight.gif");
+		womanWalkLeft = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Woman/WomanWalkLeft.gif");
+		womanWalkRight = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Woman/WomanWalkRight.gif");
+		
 		// Tiles //
 
 		hauntedForestGrassImage = myApplet.loadImage(baseFolder + "/Loading_Images/HauntedForestTile.png");

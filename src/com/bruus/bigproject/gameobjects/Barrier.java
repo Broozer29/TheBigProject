@@ -5,14 +5,14 @@ import com.bruus.bigproject.TheBigProject;
 public class Barrier extends GameObject {
 	  public Barrier(TheBigProject mainApplet,int x, int y, int w, int h) {
 		    super(mainApplet, 'B', x, y, w, h);
-		    if (mainApplet.currentZone == "TraderHouse") {
+		    if (mainApplet.currentZone == "TraderHouse" || mainApplet.currentZone.equals("CityShop")) {
 		      img = mainApplet.resourceManager.blackImage;
 		    }
 		    else if (mainApplet.currentZone == "Desert"){
 		    	img = mainApplet.resourceManager.DesertGround;
 		    }
 		    else if (mainApplet.currentZone == "City"){
-		    	img = mainApplet.resourceManager.blackImage;
+		    	img = mainApplet.resourceManager.cityGrass;
 		    }
 		    else img = mainApplet.resourceManager.grassImage;
 		  }

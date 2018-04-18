@@ -3,6 +3,7 @@ package com.bruus.bigproject.enemies;
 import com.bruus.bigproject.TheBigProject;
 
 import gifAnimation.Gif;
+import processing.core.PApplet;
 
 public class EnemyLanceKnights {
 	float knightPosX;
@@ -78,6 +79,7 @@ public class EnemyLanceKnights {
 
 	public void displayKnights() {
 		if (this.knightLife > 0) {
+			PApplet.println(this.knightPosX, this.knightPosY);
 			float randomNumber = theBigProject.random(0, 100);
 			if (randomNumber < theBigProject.dropRate) {
 				this.dropLoot = true;
@@ -188,6 +190,10 @@ public class EnemyLanceKnights {
 	}
 
 	public void swordDamage(float attackDirection, float swordSize, float swordDamage) {
+		PApplet.println(attackDirection - theBigProject.characterX, theBigProject.characterY - (swordSize / 2));
+		PApplet.println(this.knightPosX, this.knightPosY);
+		PApplet.println(theBigProject.characterX, theBigProject.characterY);
+		
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.knightPosX, this.knightPosY) < swordSize) {
 			if (theBigProject.lightningElement == true) {

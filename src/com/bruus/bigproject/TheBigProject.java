@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.bruus.bigproject.friendlies.Friendly;
 import com.bruus.bigproject.enemies.EnemyHounds;
 import com.bruus.bigproject.enemies.EnemyLanceKnights;
 import com.bruus.bigproject.enemies.EnemyMedusas;
@@ -33,6 +34,7 @@ public class TheBigProject extends PApplet {
 	ArrayList<EnemyHounds> allHounds;
 	ArrayList<EnemyMedusas> allMedusas;
 	ArrayList<EnemyScorpions> allScorpions;
+	ArrayList<Friendly> allFriendlies;
 
 	public ResourceManager resourceManager = new ResourceManager();
 	int screenWidth;
@@ -47,7 +49,7 @@ public class TheBigProject extends PApplet {
 	public float characterHealth = 100;
 	public float healthBonus;
 	public float characterMoveSpeed = 20;
-	public float playerPsionicEssence = 0;
+	public float playerPsionicEssence = 50000;
 	public int scorpionScales = 500;
 	public int medusaHair = 500;
 	public int skeletonBones = 500;
@@ -64,7 +66,7 @@ public class TheBigProject extends PApplet {
 	public float waterEssenceIncrease = 20f;
 	public float earthDamage = 33f;
 	public float iceSlow = 1f;
-	public float baseDamage = 5;
+	public float baseDamage = 50;
 	public float baseBowDamage = 50;
 	public float burningDamage = 1;
 	public long attackSpeed = 2220;
@@ -99,7 +101,7 @@ public class TheBigProject extends PApplet {
 	public String currentZone = "Forest";
 	private boolean loadedMap;
 
-	// Variables for Traders House and the Old Man
+	// Variables for Traders
 	public float oldManX = 900;
 	public float oldManY = 300;
 	public float oldManXMiddle = (oldManX + tileSize / 2) / 50;
@@ -109,6 +111,10 @@ public class TheBigProject extends PApplet {
 	boolean openWeaponShop = false;
 	int blackSmithX = 550;
 	int blackSmithY = 300;
+	public int elementEssenceRequired = 3000;
+
+	int cityShopX = 675;
+	int cityShopY = 625;
 
 	// Settings for the chat
 	public int extraChatX = 365;
@@ -117,6 +123,7 @@ public class TheBigProject extends PApplet {
 	public int nextChatX = 515;
 	public int nextChatY = 765;
 	public int currentText = 0;
+	public int maxText = 0;
 	public String currentTextSetting = "Introduction";
 	public boolean changeExtra = false;
 
@@ -178,10 +185,14 @@ public class TheBigProject extends PApplet {
 	public boolean ableToAttack = true;
 	public boolean swordRangeCombo = false;
 	public boolean arrowRangeCombo = false;
+	public float damageAt;
 
 	// Variables for text
 	public PFont psionicFont;
 	public PFont textFont;
+	int chatBoxX = 50;
+	int chatBoxY = 600;
+	int chatYStart = chatBoxY + 50;
 
 	// Variables for images on screen
 	public float swordX = 400;
@@ -202,10 +213,24 @@ public class TheBigProject extends PApplet {
 	public float elementLightningX = 980;
 	public float elementWindX = 1135;
 	public float elementIceX = 1290;
-
 	public float elementY = 100;
 	public float elementResetX = 720;
 	public float elementResetY = 700;
+
+	float scorpionScaleX = elementFireX;
+	float skeletonBoneX = elementLightX;
+	float medusaHairX = elementWaterX;
+	float paladinArmorScrapX = elementDarkX;
+	float lanceKnightSpearTipX = elementEarthX;
+	float houndToothX = elementLightningX;
+
+	// Material costs
+	public float lanceKnightSpearTipCost = 50;
+	public float paladinArmorScrapCost = 50;
+	public float skeletonBoneCost = 100;
+	public float scorpionScaleCost = 100;
+	public float houndTeethCost = 250;
+	public float medusaHairCost = 200;
 
 	public String firstElement;
 	public String secondElement;
@@ -260,6 +285,7 @@ public class TheBigProject extends PApplet {
 		allHounds = new ArrayList<>();
 		allMedusas = new ArrayList<>();
 		allScorpions = new ArrayList<>();
+		allFriendlies = new ArrayList<>();
 		allProjectiles = new ArrayList<>();
 		psionicFont = createFont("Georgia", 20);
 		textFont = createFont("Georgia", 12);
@@ -273,6 +299,7 @@ public class TheBigProject extends PApplet {
 		characterY = screenHeight / 2;
 		currentLevelNorth = 0;
 		currentLevelWest = 0;
+
 	}
 
 	public void draw() {
@@ -286,9 +313,10 @@ public class TheBigProject extends PApplet {
 			animationWait = millis() + 500;
 		}
 		levels();
+		drawEnemies();
 		characterStats();
 		character();
-		drawEnemies();
+
 	}
 
 	// ---------------------------------------------------------------------------------------------------\\
@@ -308,7 +336,7 @@ public class TheBigProject extends PApplet {
 				resourceManager.soundFile.amp(0.5f);
 				setPlayingMusic(true);
 			}
-			if (currentZone == "TraderHouse") {
+			if (currentZone == "TraderHouse" || currentZone.equals("CityShop")) {
 				resourceManager.soundFile = resourceManager.traderHouseMusic;
 				setPlayingMusic(true);
 				resourceManager.soundFile.amp(0.5f);
@@ -350,64 +378,80 @@ public class TheBigProject extends PApplet {
 		for (EnemyLanceKnights temp : allKnights) {
 			temp.displayKnights();
 			temp.bowDamage(bowDamage);
-			if (swordAttack == true) {
+			if (swordAttack == true && damageAt < millis()) {
+				println(attackDirection, areaImpact, swordDamage);
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				swordAttack = false;
 			}
-			if (attackDoubleA == true) {
+			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				attackDoubleA = false;
 			}
 		}
 
 		for (EnemyPaladins temp : allPaladins) {
 			temp.displayPaladins();
 			temp.bowDamage(bowDamage);
-			if (swordAttack == true) {
+			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				swordAttack = false;
 			}
-			if (attackDoubleA == true) {
+			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				attackDoubleA = false;
 			}
 		}
 		for (EnemySkeletons temp : allSkeletons) {
 			temp.displayskeletons();
 			temp.bowDamage(bowDamage);
-			if (swordAttack == true) {
+			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				swordAttack = false;
 			}
-			if (attackDoubleA == true) {
+			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				attackDoubleA = false;
 			}
 		}
 		for (EnemyHounds temp : allHounds) {
 			temp.displayhounds();
 			temp.bowDamage(bowDamage);
-			if (swordAttack == true) {
+			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				swordAttack = false;
 			}
-			if (attackDoubleA == true) {
+			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				attackDoubleA = false;
 			}
 		}
 
 		for (EnemyMedusas temp : allMedusas) {
 			temp.displaymedusas();
 			temp.bowDamage(bowDamage);
-			if (swordAttack == true) {
+			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				swordAttack = false;
 			}
-			if (attackDoubleA == true) {
+			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				attackDoubleA = false;
 			}
 		}
 		for (EnemyScorpions temp : allScorpions) {
 			temp.displayscorpions();
 			temp.bowDamage(bowDamage);
-			if (swordAttack == true) {
+			if (swordAttack == true && damageAt > millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				swordAttack = false;
 			}
-			if (attackDoubleA == true) {
+			if (attackDoubleA == true && damageAt > millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
+				attackDoubleA = false;
 			}
+		}
+		for (Friendly temp : allFriendlies) {
+			temp.displayFriendly();
 		}
 	}
 
@@ -435,6 +479,9 @@ public class TheBigProject extends PApplet {
 		if (allScorpions.size() > 0) {
 			allScorpions.clear();
 		}
+		if (allFriendlies.size() > 0) {
+			allFriendlies.clear();
+		}
 
 	}
 
@@ -443,6 +490,67 @@ public class TheBigProject extends PApplet {
 	// alive, aggro, Attacking, AttackDone, Debuff, Animation
 	// Float, Float, String, Float, Float, Float, Float, Float, Boolean,
 	// Boolean, Boolean, Boolean, String, Gif
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	void createFirstBoy(int posX, int posY) {
+		Friendly Boy = new Friendly(this, "Boy", posX, posY, 1, "Left", resourceManager.boyIdleLeft);
+		allFriendlies.add(Boy);
+	}
+
+	void createSecondBoy(int posX, int posY) {
+		Friendly Boy = new Friendly(this, "Boy", posX, posY, 1, "Left", resourceManager.boyIdleLeft);
+		allFriendlies.add(Boy);
+	}
+
+	void createThirdBoy(int posX, int posY) {
+		Friendly Boy = new Friendly(this, "Boy", posX, posY, 1, "Left", resourceManager.boyIdleLeft);
+		allFriendlies.add(Boy);
+	}
+
+	void createFirstGirl(int posX, int posY) {
+		Friendly Girl = new Friendly(this, "Girl", posX, posY, 1, "Left", resourceManager.girlIdleLeft);
+		allFriendlies.add(Girl);
+	}
+
+	void createSecondGirl(int posX, int posY) {
+		Friendly Girl = new Friendly(this, "Girl", posX, posY, 1, "Left", resourceManager.girlIdleLeft);
+		allFriendlies.add(Girl);
+	}
+
+	void createThirdGirl(int posX, int posY) {
+		Friendly Girl = new Friendly(this, "Girl", posX, posY, 1, "Left", resourceManager.girlIdleLeft);
+		allFriendlies.add(Girl);
+	}
+
+	void createFirstMan(int posX, int posY) {
+		Friendly Man = new Friendly(this, "Man", posX, posY, 1, "Left", resourceManager.manIdleLeft);
+		allFriendlies.add(Man);
+	}
+
+	void createSecondMan(int posX, int posY) {
+		Friendly Man = new Friendly(this, "Man", posX, posY, 1, "Left", resourceManager.manIdleLeft);
+		allFriendlies.add(Man);
+	}
+
+	void createThirdMan(int posX, int posY) {
+		Friendly Man = new Friendly(this, "Man", posX, posY, 1, "Left", resourceManager.manIdleLeft);
+		allFriendlies.add(Man);
+	}
+
+	void createFirstWoman(int posX, int posY) {
+		Friendly Woman = new Friendly(this, "Woman", posX, posY, 1, "Left", resourceManager.womanIdleLeft);
+		allFriendlies.add(Woman);
+	}
+
+	void createSecondWoman(int posX, int posY) {
+		Friendly Woman = new Friendly(this, "Woman", posX, posY, 1, "Left", resourceManager.womanIdleLeft);
+		allFriendlies.add(Woman);
+	}
+
+	void createThirdWoman(int posX, int posY) {
+		Friendly Woman = new Friendly(this, "Woman", posX, posY, 1, "Left", resourceManager.womanIdleLeft);
+		allFriendlies.add(Woman);
+	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	void createFirstKnight(float knightPosX, float knightPosY) {
@@ -973,9 +1081,11 @@ public class TheBigProject extends PApplet {
 		}
 		if (currentLevelNorth == -5 && currentLevelWest == 2 && currentZone == "City") {
 			cityZoneMinusFiveTwo();
+			playMusic();
 		}
 		if (currentLevelNorth == -5 && currentLevelWest == 3 && currentZone == "City") {
 			cityZoneMinusFiveThree();
+
 		}
 
 		// Desert
@@ -1055,6 +1165,10 @@ public class TheBigProject extends PApplet {
 		}
 
 		if (currentLevelNorth == 0 && currentLevelWest == 0 && currentZone == "TraderHouse") {
+			traderHouse();
+			playMusic();
+		}
+		if (currentLevelNorth == -5 && currentLevelWest == 2 && currentZone == "CityShop") {
 			traderHouse();
 			playMusic();
 		}
@@ -1139,7 +1253,14 @@ public class TheBigProject extends PApplet {
 			setLoadedMap(false);
 		}
 		if (enteredHouse == true) {
-			currentZone = "TraderHouse";
+			if (currentZone.equals("Forest")) {
+				currentZone = "TraderHouse";
+			}
+			if (currentZone.equals("City")) {
+				currentZone = "CityShop";
+				characterX = 600;
+				characterY = 300;
+			}
 			clearEnemies();
 			setLoadedMap(false);
 			enteredHouse = false;
@@ -1158,10 +1279,11 @@ public class TheBigProject extends PApplet {
 			}
 			setLoadedMap(true);
 		}
+
 		if (characterX / 50 == 12 && characterY / 50 == 6 && action == true) {
 			enteredHouse = true;
+			currentTextSetting = "Introduction";
 		}
-
 		image(resourceManager.traderHouse, locationTradeHouseX, locationTradeHouseY, 300, 300);
 	}
 
@@ -1174,12 +1296,16 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstMan(450, 200);
+			createFirstWoman(850, 350);
+			createFirstBoy(1000, 250);
+			createSecondBoy(1200, 350);
 			setLoadedMap(true);
 		}
 		image(resourceManager.cityHouseLarge, 275, 150);
 		image(resourceManager.cityHouseOne, 925, 125);
 		image(resourceManager.cityHouseOne, 1125, 125);
-		image(resourceManager.cityHouseOne, 1325 , 125);
+		image(resourceManager.cityHouseOne, 1325, 125);
 		image(resourceManager.cityHouseTwo, 925, 325);
 		image(resourceManager.cityHouseTwo, 1125, 325);
 		image(resourceManager.cityHouseTwo, 1325, 325);
@@ -1193,9 +1319,18 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstGirl(250, 400);
+			createFirstWoman(750, 650);
+			createFirstMan(1100, 300);
+			createSecondMan(800, 150);
 			setLoadedMap(true);
 		}
-		image(resourceManager.cityShop, 675, 625);
+
+		if (characterX / 50 == 13 && characterY / 50 == 14 && action == true) {
+			enteredHouse = true;
+			currentTextSetting = "ShopKeepIntro";
+		}
+		image(resourceManager.cityShop, cityShopX, cityShopY);
 		image(resourceManager.cityHouseThree, 275, 125);
 		image(resourceManager.cityHouseThree, 425, 125);
 		image(resourceManager.cityHouseThree, 575, 125);
@@ -1213,6 +1348,13 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
+			createFirstGirl(200, 200);
+			createSecondGirl(500, 100);
+			createFirstBoy(1100, 200);
+			createSecondBoy(1200, 300);
+			createFirstWoman(500, 500);
+			createFirstMan(450, 500);
+			createSecondMan(700, 600);
 			setLoadedMap(true);
 		}
 		image(resourceManager.cityHouseOne, 625, 175);
@@ -1754,11 +1896,19 @@ public class TheBigProject extends PApplet {
 		}
 		if (characterX > traderHouseDoorX) {
 			setLoadedMap(false);
-			currentZone = "Forest";
-			characterX = 600;
-			characterY = 300;
+			if (currentZone.equals("TraderHouse")) {
+				currentZone = "Forest";
+				characterX = 600;
+				characterY = 300;
+			}
+			if (currentZone.equals("CityShop")) {
+				currentZone = "City";
+				characterX = 650;
+				characterY = 650;
+			}
 			enteredHouse = false;
 		}
+
 		oldDude(oldManX, oldManY);
 		image(resourceManager.oldDudeImage, oldManX, oldManY);
 		image(resourceManager.traderHouseDoor, traderHouseDoorX, traderHouseDoorY, 100, 150);
@@ -1782,18 +1932,31 @@ public class TheBigProject extends PApplet {
 
 		if (loadInventory == true) {
 			fill(255);
-			image(resourceManager.scorpionScale, elementFireX, elementY);
-			text(scorpionScales, elementFireX, elementY + tileSize);
-			image(resourceManager.skeletonBone, elementLightX, elementY);
-			text(skeletonBones, elementLightX, elementY + tileSize);
-			image(resourceManager.medusaHair, elementWaterX, elementY);
-			text(medusaHair, elementWaterX, elementY + tileSize);
-			image(resourceManager.paladinArmorScrap, elementDarkX, elementY);
-			text(paladinArmorScraps, elementDarkX, elementY + tileSize);
-			image(resourceManager.lanceKnightSpearTip, elementEarthX, elementY);
-			text(lanceKnightSpearTips, elementEarthX, elementY + tileSize);
-			image(resourceManager.houndTooth, elementLightningX, elementY);
-			text(houndTeeth, elementLightningX, elementY + tileSize);
+			image(resourceManager.scorpionScale, scorpionScaleX, elementY, 50, 50);
+			image(resourceManager.skeletonBone, skeletonBoneX, elementY, 50, 50);
+			image(resourceManager.medusaHair, medusaHairX, elementY, 50, 50);
+			image(resourceManager.paladinArmorScrap, paladinArmorScrapX, elementY, 50, 50);
+			image(resourceManager.lanceKnightSpearTip, lanceKnightSpearTipX, elementY, 50, 50);
+			image(resourceManager.houndTooth, houndToothX, elementY, 50, 50);
+
+			textSize(22);
+			if (openShop == true) {
+				text(lanceKnightSpearTipCost, lanceKnightSpearTipX, elementY + tileSize);
+				text(paladinArmorScrapCost, paladinArmorScrapX, elementY + tileSize);
+				text(medusaHairCost, medusaHairX, elementY + tileSize);
+				text(skeletonBoneCost, skeletonBoneX, elementY + tileSize);
+				text(scorpionScaleCost, scorpionScaleX, elementY + tileSize);
+				text(houndTeethCost, houndToothX, elementY + tileSize);
+			}
+
+			if (openShop == false) {
+				text(lanceKnightSpearTips, lanceKnightSpearTipX, elementY + tileSize);
+				text(paladinArmorScraps, paladinArmorScrapX, elementY + tileSize);
+				text(medusaHair, medusaHairX, elementY + tileSize);
+				text(skeletonBones, skeletonBoneX, elementY + tileSize);
+				text(scorpionScales, scorpionScaleX, elementY + tileSize);
+				text(houndTeeth, houndToothX, elementY + tileSize);
+			}
 		}
 	}
 
@@ -2070,73 +2233,26 @@ public class TheBigProject extends PApplet {
 	void weaponSelection() {
 		weaponImages();
 		if (weaponSelected == "Sword") {
-			if (swordLevel == 1) {
-				swordBonusDamage = 0.3f;
-			}
-			if (swordLevel == 2) {
-				swordBonusDamage = 0.6f;
-			}
-			if (swordLevel == 3) {
-				swordBonusDamage = 0.9f;
-			}
-
-			if (swordLevel == 4) {
-				swordBonusDamage = 1.2f;
-			}
-			if (swordLevel == 5) {
-				swordBonusDamage = 1.5f;
-			}
-			if (swordLevel == 6) {
-				swordBonusDamage = 1.8f;
-			}
+			swordBonusDamage += swordLevel * 0.3f;
 		}
 
 		if (weaponSelected == "Axe") {
-			if (axeLevel == 1) {
-				axeBonusDamage = 0.3f;
-				axeBonusRange = 2;
-			}
-			if (axeLevel == 2) {
-				axeBonusDamage = 0.5f;
-				axeBonusRange = 4;
-			}
-			if (axeLevel == 3) {
-				axeBonusDamage = 0.7f;
-				axeBonusRange = 6;
-			}
-			if (axeLevel == 4) {
-				axeBonusDamage = 0.9f;
-				axeBonusRange = 8;
-			}
-			if (axeLevel == 5) {
-				axeBonusDamage = 1.3f;
-				axeBonusRange = 10;
-			}
+			axeBonusRange = axeLevel * 2;
+			axeBonusDamage = axeLevel * 0.25f;
 		}
 
 		if (weaponSelected == "Scimitar") {
-			if (scimitarLevel == 1) {
-				scimitarBonusDamage += 10f;
-			}
-			if (scimitarLevel == 3) {
-				scimitarBonusDamage += 20f;
-			}
-			if (scimitarLevel == 3) {
-				scimitarBonusDamage += 30f;
-			}
-			if (scimitarLevel == 4) {
-				scimitarBonusDamage += 40f;
-			}
+			scimitarBonusDamage += scimitarLevel * 10;
 		}
 
 		if (loadWeapons == true) {
 			image(resourceManager.swordImage, swordX, weaponY);
 			image(resourceManager.axeImage, axeX, weaponY);
 			image(resourceManager.scimitarImage, scimitarX, weaponY);
-			image(resourceManager.helmImage, armorX, helmY);
-			image(resourceManager.chestImage, armorX, chestY);
-			image(resourceManager.pantsImage, armorX, pantsY);
-			image(resourceManager.bootsImage, armorX, bootsY);
+			image(resourceManager.helmImage, armorX, helmY, 50, 50);
+			image(resourceManager.chestImage, armorX, chestY, 50, 50);
+			image(resourceManager.pantsImage, armorX, pantsY, 50, 50);
+			image(resourceManager.bootsImage, armorX, bootsY, 50, 50);
 
 			if (openShop == true) {
 				loadMaterials();
@@ -2220,57 +2336,82 @@ public class TheBigProject extends PApplet {
 	}
 
 	void elementSelection() {
+		int textDistance = 80;
+		fill(0, 255, 255);
+		textSize(22);
 		if (loadElements == true) {
 			if (fireUnlocked == true || openShop == true) {
 				image(resourceManager.elementImageFire, elementFireX, elementY);
 			}
 			if (iceUnlocked == true || openShop == true) {
+				if (iceUnlocked == false) {
+					text(elementEssenceRequired, elementIceX, elementY + textDistance);
+				}
 				image(resourceManager.elementImageIce, elementIceX, elementY);
 			}
 			if (lightUnlocked == true || openShop == true) {
 				image(resourceManager.elementImageLight, elementLightX, elementY);
+				if (lightUnlocked == false) {
+					text(elementEssenceRequired, elementLightX, elementY + textDistance);
+				}
 			}
 			if (waterUnlocked == true || openShop == true) {
 				image(resourceManager.elememtImageWater, elementWaterX, elementY);
+				if (waterUnlocked == false) {
+					text(elementEssenceRequired, elementWaterX, elementY + textDistance);
+				}
 			}
 			if (darkUnlocked == true || openShop == true) {
 				image(resourceManager.elementImageDark, elementDarkX, elementY);
+				if (darkUnlocked == false) {
+					text(elementEssenceRequired, elementDarkX, elementY + textDistance);
+				}
 			}
 			if (earthUnlocked == true || openShop == true) {
 				image(resourceManager.elementImageEarth, elementEarthX, elementY);
+				if (earthUnlocked == false) {
+					text(elementEssenceRequired, elementEarthX, elementY + textDistance);
+				}
 			}
 			if (windUnlocked == true || openShop == true) {
 				image(resourceManager.elementImageWind, elementWindX, elementY);
+				if (windUnlocked == false) {
+					text(elementEssenceRequired, elementWindX, elementY + textDistance);
+				}
 			}
 			if (lightningUnlocked == true || openShop == true) {
 				image(resourceManager.elementImageLightning, elementLightningX, elementY);
+				if (lightningUnlocked == false) {
+					text(elementEssenceRequired, elementLightningX, elementY + textDistance);
+				}
 			}
-			if (openShop == false)
+			if (openShop == false) {
 				image(resourceManager.elementImageReset, elementResetX, elementResetY);
 
-			if (earthElement == true) {
-				image(resourceManager.elementSelectedImage, elementEarthX, elementY, 100, 100);
-			}
-			if (fireElement == true) {
-				image(resourceManager.elementSelectedImage, elementFireX, elementY, 100, 100);
-			}
-			if (iceElement == true) {
-				image(resourceManager.elementSelectedImage, elementIceX, elementY, 100, 100);
-			}
-			if (darkElement == true) {
-				image(resourceManager.elementSelectedImage, elementDarkX, elementY, 100, 100);
-			}
-			if (lightElement == true) {
-				image(resourceManager.elementSelectedImage, elementLightX, elementY, 100, 100);
-			}
-			if (lightningElement == true) {
-				image(resourceManager.elementSelectedImage, elementLightningX, elementY, 100, 100);
-			}
-			if (windElement == true) {
-				image(resourceManager.elementSelectedImage, elementWindX, elementY, 100, 100);
-			}
-			if (waterElement == true) {
-				image(resourceManager.elementSelectedImage, elementWaterX, elementY, 100, 100);
+				if (earthElement == true) {
+					image(resourceManager.elementSelectedImage, elementEarthX, elementY, 100, 100);
+				}
+				if (fireElement == true) {
+					image(resourceManager.elementSelectedImage, elementFireX, elementY, 100, 100);
+				}
+				if (iceElement == true) {
+					image(resourceManager.elementSelectedImage, elementIceX, elementY, 100, 100);
+				}
+				if (darkElement == true) {
+					image(resourceManager.elementSelectedImage, elementDarkX, elementY, 100, 100);
+				}
+				if (lightElement == true) {
+					image(resourceManager.elementSelectedImage, elementLightX, elementY, 100, 100);
+				}
+				if (lightningElement == true) {
+					image(resourceManager.elementSelectedImage, elementLightningX, elementY, 100, 100);
+				}
+				if (windElement == true) {
+					image(resourceManager.elementSelectedImage, elementWindX, elementY, 100, 100);
+				}
+				if (waterElement == true) {
+					image(resourceManager.elementSelectedImage, elementWaterX, elementY, 100, 100);
+				}
 			}
 		}
 	}
@@ -2305,13 +2446,11 @@ public class TheBigProject extends PApplet {
 		}
 
 		if (dist(mouseX, mouseY, nextChatX, nextChatY) < 50 && action == true) {
-			if (currentText != 8 && currentTextSetting == "Introduction") {
-				currentText++;
-			}
-			if (currentText != 4 && currentTextSetting == "ElementExplanation") {
+			if (currentText < maxText) {
 				currentText++;
 			}
 		}
+
 		if (dist(mouseX, mouseY, prevChatX, nextChatY) < 50 && action == true) {
 			currentText--;
 			if (currentText < 0) {
@@ -2320,15 +2459,29 @@ public class TheBigProject extends PApplet {
 		}
 		if (dist(mouseX, mouseY, extraChatX, nextChatY) < 50 && action == true) {
 			changeExtra = true;
-			if (currentTextSetting == "Introduction" == changeExtra == true) {
-				currentTextSetting = "ElementExplanation";
-				currentText = 0;
-				changeExtra = false;
+			if (currentZone.equals("TraderHouse")) {
+				if (currentTextSetting == "Introduction" && changeExtra == true) {
+					currentTextSetting = "ElementExplanation";
+					currentText = 0;
+					changeExtra = false;
+				}
+				if (currentTextSetting == "ElementExplanation" && changeExtra == true) {
+					currentTextSetting = "Introduction";
+					currentText = 0;
+					changeExtra = false;
+				}
 			}
-			if (currentTextSetting == "ElementExplanation" && changeExtra == true) {
-				currentTextSetting = "Introduction";
-				currentText = 0;
-				changeExtra = false;
+			if (currentZone.equals("CityShop")) {
+				if (currentTextSetting == "ShopKeepIntro" && changeExtra == true) {
+					currentTextSetting = "ShopKeepExtra";
+					currentText = 0;
+					changeExtra = false;
+				}
+				if (currentTextSetting == "ShopKeepExtra" && changeExtra == true) {
+					currentTextSetting = "ShopKeepIntro";
+					currentText = 0;
+					changeExtra = false;
+				}
 			}
 		}
 		// Weapon selection
@@ -2431,12 +2584,54 @@ public class TheBigProject extends PApplet {
 
 			}
 		}
+		// Buy materials
 
-		// Elements gedeelte
+		if (loadInventory == true) {
+			if (dist(mouseX, mouseY, lanceKnightSpearTipX, elementY) < tileSize) {
+				if (openShop == true && action == true) {
+					lanceKnightSpearTips++;
+					playerPsionicEssence -= lanceKnightSpearTipCost;
+				}
+			}
+			if (dist(mouseX, mouseY, medusaHairX, elementY) < tileSize) {
+				if (openShop == true && action == true) {
+					medusaHair++;
+					playerPsionicEssence -= medusaHairCost;
+				}
+			}
+			if (dist(mouseX, mouseY, houndToothX, elementY) < tileSize) {
+				if (openShop == true && action == true) {
+					houndTeeth++;
+					playerPsionicEssence -= houndTeethCost;
+				}
+			}
+			if (dist(mouseX, mouseY, paladinArmorScrapX, elementY) < tileSize) {
+				if (openShop == true && action == true) {
+					paladinArmorScraps++;
+					playerPsionicEssence -= paladinArmorScrapCost;
+				}
+			}
+			if (dist(mouseX, mouseY, skeletonBoneX, elementY) < tileSize) {
+				if (openShop == true && action == true) {
+					skeletonBones++;
+					playerPsionicEssence -= skeletonBoneCost;
+				}
+			}
+			if (dist(mouseX, mouseY, scorpionScaleX, elementY) < tileSize) {
+				if (openShop == true && action == true) {
+					scorpionScales++;
+					playerPsionicEssence -= scorpionScaleCost;
+				}
+			}
+		}
+
+		// Select/Buy elements
 		if (loadElements == true) {
 			if (dist(mouseX, mouseY, elementFireX, elementY) < tileSize) {
-				if (openShop == true && action == true && fireUnlocked == false) {
+				if (openShop == true && action == true && fireUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					fireUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Fire" && openShop == false && fireUnlocked == true) {
 					firstElement = "Fire";
@@ -2451,8 +2646,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementIceX, elementY) < tileSize) {
-				if (openShop == true && action == true && iceUnlocked == false) {
+				if (openShop == true && action == true && iceUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					iceUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Ice" && openShop == false && iceUnlocked == true) {
 					firstElement = "Ice";
@@ -2466,8 +2663,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementLightX, elementY) < tileSize) {
-				if (openShop == true && action == true && lightUnlocked == false) {
+				if (openShop == true && action == true && lightUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					lightUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Light" && openShop == false && lightUnlocked == true) {
 					firstElement = "Light";
@@ -2481,8 +2680,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementWaterX, elementY) < tileSize) {
-				if (openShop == true && action == true && waterUnlocked == false) {
+				if (openShop == true && action == true && waterUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					waterUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Water" && openShop == false && waterUnlocked == true) {
 					firstElement = "Water";
@@ -2495,8 +2696,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementDarkX, elementY) < tileSize) {
-				if (openShop == true && action == true && darkUnlocked == false) {
+				if (openShop == true && action == true && darkUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					darkUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Dark" && openShop == false && darkUnlocked == true) {
 					firstElement = "Dark";
@@ -2510,8 +2713,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementEarthX, elementY) < tileSize) {
-				if (openShop == true && action == true && earthUnlocked == false) {
+				if (openShop == true && action == true && earthUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					earthUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Earth" && openShop == false && earthUnlocked == true) {
 					firstElement = "Earth";
@@ -2525,8 +2730,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementWindX, elementY) < tileSize) {
-				if (openShop == true && action == true && windUnlocked == false) {
+				if (openShop == true && action == true && windUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					windUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Wind" && openShop == false && windUnlocked == true) {
 					firstElement = "Wind";
@@ -2540,8 +2747,10 @@ public class TheBigProject extends PApplet {
 			}
 
 			if (dist(mouseX, mouseY, elementLightningX, elementY) < tileSize) {
-				if (openShop == true && action == true && lightningUnlocked == false) {
+				if (openShop == true && action == true && lightningUnlocked == false
+						&& playerPsionicEssence >= elementEssenceRequired) {
 					lightningUnlocked = true;
+					playerPsionicEssence -= elementEssenceRequired;
 				}
 				if (firstElement == null && firstElement != "Lightning" && openShop == false && windUnlocked == true) {
 					firstElement = "Lightning";
@@ -2566,11 +2775,9 @@ public class TheBigProject extends PApplet {
 	// ---------------------------------------------------------------------------------------------------\\
 	// Blacksmith
 	void blackSmith() {
-		int chatBoxX = 50;
-		int chatBoxY = 600;
 		if (characterX / 50 == 11 && characterY / 50 == 7 && action == true) {
-			chatBox(chatBoxX, chatBoxY);
-			textChat(chatBoxX, chatBoxY, "Blacksmith");
+			chatBox();
+			textChat("Blacksmith");
 
 			if (openShop == true) {
 				loadWeapons = true;
@@ -2752,29 +2959,43 @@ public class TheBigProject extends PApplet {
 		if (openShop == true && action == false) {
 			openShop = false;
 			loadElements = false;
+			loadInventory = false;
 			currentText = 0;
 		}
 
 		if (dist(characterX, characterY, (oldDudeX + 25), (oldDudeY + 50)) < 200 && action == true) {
 			resourceManager.oldDudeImage = resourceManager.oldDudePurchase;
-			if (openShop == true) {
+			if (openShop == true && currentZone.equals("TraderHouse")) {
 				loadElements = true;
+			}
+			if (openShop == true && currentZone.equals("CityShop")) {
+				loadInventory = true;
 			} else {
-				int chatBoxX = 50;
-				int chatBoxY = 600;
-				chatBox(chatBoxX, chatBoxY);
-				textChat(chatBoxX, chatBoxY, "OldMan");
+				chatBox();
+				textChat("OldMan");
 			}
 		}
 	}
 
 	// ---------------------------------------------------------------------------------------------------\\
 
+	public void friendlyChat(String friendlyName, String friendlyChat) {
+		textFont(textFont);
+		textAlign(CORNER);
+		rectMode(CORNER);
+		fill(60);
+		rect(chatBoxX, chatBoxY, 500, 200);
+		fill(255);
+		textSize(20);
+		text(friendlyName, chatBoxX + 10, chatYStart - 20);
+		textSize(11);
+		text(friendlyChat, chatBoxX + 10, chatYStart);
+	}
+
 	// Text for the old man
 
-	void textChat(int chatBoxX, int chatBoxY, String person) {
+	void textChat(String person) {
 		textFont(textFont);
-		int chatYStart = chatBoxY + 50;
 		String currentText = "Hey there, if you are reading this, then the code has fucked up \nand whatever I wanted to say isn't actually going to be said. \nYou managed to break the game! Congratulations and fuck you!";
 		String blackSmithText = "Hey there, if you are reading this, then the code has fucked up \nand whatever I wanted to say isn't actually going to be said. \nYou managed to break the game! Congratulations and fuck you!";
 		if (person == "OldMan") {
@@ -2789,71 +3010,58 @@ public class TheBigProject extends PApplet {
 	}
 
 	String allTexts(String textMessage, String person) {
-		if (person == "OldMan") {
-			String firstIntroText = "Greetings, I am the Old Dude of the Forest. But you can call me anytime.\nHaha okay enough flirting, I presume you have broken your way \ninto my home for my infamous knowledge of the elements. \nOr you just like to barge into other people's homes for some reason. \nEither way, I can teach you a few things about the elements. For a Price.";
-			String secondIntroText = "The elements are powers of nature. They can be used to empower your attacks. \nSince the sundering of the Ajimeri Empire many of the secrets of these abilities \nhave been long forgotten. However, once in a while a child is born with these powers. \nI can sense from your strength that you are one of them.";
-			String thirdIntroText = "Though you are a powerful warrior, you have no experience with \nthe power of the elements. \nI am willing to teach you it's secrets and learn to master it. For a price. \nWith the sundering of the Ajimeri Empire most of the psionic power has been \nblasted into the world. \nThese psionic powers have nested in almost everything that lives. \nEmpowering their abilities, but also driving them \nin a rage.";
-			String fourthIntroText = "If you wish for me to train you, I require these psionic powers from such entities. \nBring their psionic essence to me, \nand I will trade it with you for knowledge of the elements.";
-			String fifthIntroText = "Now that the roleplaying has gotten over with, on to more practical stuff. \nPress the extra button for additional dialogue. I know it's confusing but the guy who \nprogrammed this is partially retarded so cut him some slack. \nRight, so about the 'How to play' part of this well thought out tutorial.";
-			String sixthIntroText = "Moving around is done with the keys, you probably already figured that out \notherwise you wouldn't be standing here. \nPressing 'x' causes you to take an 'action'. \nPressing 'a' makes you do a sword attack. \n Pressing 'd' lets you throw out a bolt of energy. \nPressing 'c' opens the menu of elements.";
-			String seventhIntroText = "Right, so you probably opened the element selection screen already, \nso press the extra button for explanation of those.";
+		if (person == "OldMan" && currentZone == "TraderHouse") {
+			String[] oldDudeIntroText = {
+					"Greetings, I am the Old Dude of the Forest. But you can call me anytime.\nHaha okay enough flirting, I presume you have broken your way \ninto my home for my infamous knowledge of the elements. \nOr you just like to barge into other people's homes for some reason. \nEither way, I can teach you a few things about the elements. For a Price.",
+					"The elements are powers of nature. They can be used to empower your attacks. \nSince the sundering of the Ajimeri Empire many of the secrets of these abilities \nhave been long forgotten. However, once in a while a child is born with these powers. \nI can sense from your strength that you are one of them.",
+					"Though you are a powerful warrior, you have no experience with \nthe power of the elements. \nI am willing to teach you it's secrets and learn to master it. For a price. \nWith the sundering of the Ajimeri Empire most of the psionic power has been \nblasted into the world. \nThese psionic powers have nested in almost everything that lives. \nEmpowering their abilities, but also driving them \nin a rage.",
+					"If you wish for me to train you, I require these psionic powers from such entities. \nBring their psionic essence to me, \nand I will trade it with you for knowledge of the elements.",
+					"Now that the roleplaying has gotten over with, on to more practical stuff. \nPress the extra button for additional dialogue. I know it's confusing but the guy who \nprogrammed this is partially retarded so cut him some slack. \nRight, so about the 'How to play' part of this well thought out tutorial.",
+					"Moving around is done with the keys, you probably already figured that out \notherwise you wouldn't be standing here. \nPressing 'x' causes you to take an 'action'. \nPressing 'a' makes you do a sword attack. \n Pressing 'd' lets you throw out a bolt of energy. \nPressing 'c' opens the menu of elements." };
 
-			String firstElementText = "To unlock explanations of the elements: \nPlease donate a small fee of 5 euro's to the creater of this game. \nThis message has been brought to you by: Electronic Arts. It's in the game.";
-			String secondElementText = "Okay just kidding. Alright let me break it down for you, \nit's fairly easy because the programmer is bad at improvising. \nFire: Using fire sets your enemies on fire that deals a DoT. +50 DKP \n Ice: Using ice slows your enemies movement speed. \n Lightning: Using lightning causes an enemy to take and deal more damage.";
-			String thirdElementText = "Wind: Using wind causes your energy to move faster. \n Earth: Using earth makes your sword and energy attack deal more damage. \nDark: Using dark grants you a 10% life steal. \n Light: Using light causes you to take less damage, but also deal less. \n Water: Using water is fucking retarded because it does nothing. So don't even bother.";
+			String[] oldDudeExplanationText = {
+					"To unlock explanations of the elements: \nPlease donate a small fee of 5 euro's to the creater of this game. \nThis message has been brought to you by: Electronic Arts. It's in the game.",
+					"Okay just kidding. Alright let me break it down for you, \nit's fairly easy because the programmer is bad at improvising. \nFire: Using fire sets your enemies on fire that deals a DoT. +50 DKP \n Ice: Using ice slows your enemies movement speed. \n Lightning: Using lightning causes an enemy to take and deal more damage.",
+					"Wind: Using wind causes your energy to move faster. \n Earth: Using earth makes your sword and energy attack deal more damage. \nDark: Using dark grants you a 10% life steal. \n Light: Using light causes you to take less damage, but also deal less. \n Water: Using water increases psionic essence drops and drop rate of items." };
 			if (currentTextSetting == "Introduction") {
-				if (currentText == 0) {
-					textMessage = firstIntroText;
-				} else if (currentText == 1) {
-					textMessage = secondIntroText;
-				} else if (currentText == 2) {
-					textMessage = thirdIntroText;
-				} else if (currentText == 3) {
-					textMessage = fourthIntroText;
-				} else if (currentText == 4) {
-					textMessage = fifthIntroText;
-				} else if (currentText == 5) {
-					textMessage = sixthIntroText;
-				} else if (currentText == 6) {
-					textMessage = seventhIntroText;
-				} else if (currentText == 7) {
-					currentText = 6;
-				}
+				maxText = oldDudeIntroText.length - 1;
+				textMessage = oldDudeIntroText[currentText];
 			}
 			if (currentTextSetting == "ElementExplanation") {
-				if (currentText == 0) {
-					textMessage = firstElementText;
-				}
-				if (currentText == 1) {
-					textMessage = secondElementText;
-				}
-				if (currentText == 2) {
-					textMessage = thirdElementText;
-				}
-				if (currentText == 3) {
-					currentText = 2;
-				}
+				maxText = oldDudeExplanationText.length - 1;
+				textMessage = oldDudeExplanationText[currentText];
 			}
 		}
-		if (person == "Blacksmith") {
-			String smithFirstMessage = "Hey there stranger, what brings you to these parts? \nI doubt it's the weather or beautiful surroundings. Because there are skeletons and snakes \nthrowing purple shit everywhere. \nI have been living here for a while now, this place used to be similar to the forest over yonder. \nBut alas, the fools of the Ajimeri Empire dabbled with forces beyond their comprehension, \nand the sundering ruined this land.";
-			String smithSecondMessage = "But I don't really care though, all I care about is hitting metal to make it dangerous. \nSo if you want your weapons upgraded, or wish to purchase weapons \njust bring the materials and enough essence and I'm your guy.";
 
-			if (currentText == 0) {
-				textMessage = smithFirstMessage;
+		if (person == "OldMan" && currentZone == "CityShop") {
+			String[] shopKeepText = {
+					"Greetings stranger, what brings you to these parts? \nI am the trader of this town, I sell all sorts of stuff for some psionic essence." };
+			String[] shopKeepExtra = {
+					"You have met me before? I doubt it, I never forget a face. \nYou probably met my twin, he's been gone for a while and he never writes me! Can you believe him? \nIf you see him again, please tell him to write me back, I have no idea what he's up to these days" };
+			if (currentTextSetting == "ShopKeepIntro") {
+				maxText = shopKeepText.length - 1;
+				textMessage = shopKeepText[currentText];
 			}
-			if (currentText == 1) {
-				textMessage = smithSecondMessage;
+			if (currentTextSetting == "ShopKeepExtra") {
+				maxText = shopKeepExtra.length - 1;
+				textMessage = shopKeepExtra[currentText];
 			}
-			if (currentText == 2) {
-				currentText = 1;
-			}
+
+		}
+
+		if (person == "Blacksmith") {
+
+			String[] smithText = {
+					"Hey there stranger, what brings you to these parts? \nI doubt it's the weather or beautiful surroundings. Because there are skeletons and snakes \nthrowing purple shit everywhere. \nI have been living here for a while now, this place used to be similar to the forest over yonder. \nBut alas, the fools of the Ajimeri Empire dabbled with forces beyond their comprehension, \nand the sundering ruined this land.",
+					"But I don't really care though, all I care about is hitting metal to make it dangerous. \nSo if you want your weapons upgraded, or wish to purchase weapons \njust bring the materials and enough essence and I'm your guy." };
+			maxText = smithText.length - 1;
+			textMessage = smithText[currentText];
 		}
 		return textMessage;
 
 	}
 
-	void chatBox(int chatBoxX, int chatBoxY) {
+	void chatBox() {
 		fill(60);
 		rectMode(CORNER);
 		rect(chatBoxX, chatBoxY, 500, 200);
@@ -2888,6 +3096,7 @@ public class TheBigProject extends PApplet {
 					&& millis() < timeUntilCombo && attackDoubleA == false) {
 				attackDoubleA = true;
 				attackUntil = millis() + attackSpeed * 2 - 400;
+				damageAt = millis() + 2500;
 			}
 			if (ableToAttack == true) {
 				action = false;
@@ -2895,6 +3104,7 @@ public class TheBigProject extends PApplet {
 				standingStill = false;
 				ableToAttack = false;
 				attackUntil = millis() + attackSpeed;
+				damageAt = millis() + 2000;
 				timeUntilCombo = millis() + timeForCombo;
 			}
 		}
