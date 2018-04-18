@@ -79,7 +79,6 @@ public class EnemyLanceKnights {
 
 	public void displayKnights() {
 		if (this.knightLife > 0) {
-			PApplet.println(this.knightPosX, this.knightPosY);
 			float randomNumber = theBigProject.random(0, 100);
 			if (randomNumber < theBigProject.dropRate) {
 				this.dropLoot = true;
@@ -196,6 +195,7 @@ public class EnemyLanceKnights {
 		
 		if (TheBigProject.dist(theBigProject.characterX + (attackDirection - theBigProject.characterX),
 				(theBigProject.characterY - (swordSize / 2)), this.knightPosX, this.knightPosY) < swordSize) {
+			
 			if (theBigProject.lightningElement == true) {
 				this.knightLife = this.knightLife - (swordDamage * 1.5f);
 			} else {
@@ -233,7 +233,7 @@ public class EnemyLanceKnights {
 				this.knightDebuff = "Fire";
 			}
 			if (theBigProject.iceElement == true) {
-				this.knightMovementSpeed = 2.5f;
+				this.knightMovementSpeed =  this.knightMovementSpeed - theBigProject.iceSlow;
 			}
 			if (theBigProject.darkElement == true) {
 				theBigProject.characterHealth += (bowDamage / 100) * theBigProject.lifeSteal;

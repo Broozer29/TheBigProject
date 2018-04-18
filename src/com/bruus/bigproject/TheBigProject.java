@@ -378,6 +378,8 @@ public class TheBigProject extends PApplet {
 		for (EnemyLanceKnights temp : allKnights) {
 			temp.displayKnights();
 			temp.bowDamage(bowDamage);
+			println("1");
+			println("2");
 			if (swordAttack == true && damageAt < millis()) {
 				println(attackDirection, areaImpact, swordDamage);
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
