@@ -66,7 +66,7 @@ public class TheBigProject extends PApplet {
 	public float waterEssenceIncrease = 20f;
 	public float earthDamage = 33f;
 	public float iceSlow = 1f;
-	public float baseDamage = 50;
+	public float baseDamage = 5;
 	public float baseBowDamage = 50;
 	public float burningDamage = 1;
 	public long attackSpeed = 2220;
@@ -378,16 +378,12 @@ public class TheBigProject extends PApplet {
 		for (EnemyLanceKnights temp : allKnights) {
 			temp.displayKnights();
 			temp.bowDamage(bowDamage);
-			println("1");
-			println("2");
 			if (swordAttack == true && damageAt < millis()) {
 				println(attackDirection, areaImpact, swordDamage);
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				swordAttack = false;
 			}
 			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				attackDoubleA = false;
 			}
 		}
 
@@ -396,11 +392,9 @@ public class TheBigProject extends PApplet {
 			temp.bowDamage(bowDamage);
 			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				swordAttack = false;
 			}
 			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				attackDoubleA = false;
 			}
 		}
 		for (EnemySkeletons temp : allSkeletons) {
@@ -408,11 +402,9 @@ public class TheBigProject extends PApplet {
 			temp.bowDamage(bowDamage);
 			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				swordAttack = false;
 			}
 			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				attackDoubleA = false;
 			}
 		}
 		for (EnemyHounds temp : allHounds) {
@@ -420,11 +412,9 @@ public class TheBigProject extends PApplet {
 			temp.bowDamage(bowDamage);
 			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				swordAttack = false;
 			}
 			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				attackDoubleA = false;
 			}
 		}
 
@@ -433,11 +423,9 @@ public class TheBigProject extends PApplet {
 			temp.bowDamage(bowDamage);
 			if (swordAttack == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				swordAttack = false;
 			}
 			if (attackDoubleA == true && damageAt < millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				attackDoubleA = false;
 			}
 		}
 		for (EnemyScorpions temp : allScorpions) {
@@ -445,11 +433,9 @@ public class TheBigProject extends PApplet {
 			temp.bowDamage(bowDamage);
 			if (swordAttack == true && damageAt > millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				swordAttack = false;
 			}
 			if (attackDoubleA == true && damageAt > millis()) {
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
-				attackDoubleA = false;
 			}
 		}
 		for (Friendly temp : allFriendlies) {
@@ -1060,17 +1046,66 @@ public class TheBigProject extends PApplet {
 		if (currentLevelNorth == -1 && currentLevelWest == 0 && currentZone == "Forest") {
 			forestZoneMinusOneZero();
 		}
+
+		if (currentLevelNorth == -1 && currentLevelWest == -1 && currentZone == "Forest") {
+			forestZoneMinusOneMinusOne();
+		}
+		if (currentLevelNorth == -1 && currentLevelWest == -2 && currentZone == "Forest") {
+			forestZoneMinusOneMinusTwo();
+			playMusic();
+		}
+		if (currentLevelNorth == -1 && currentLevelWest == -3 && currentZone == "HauntedForest") {
+			hauntedZoneMinusOneMinusThree();
+			playMusic();
+		}
+		if (currentLevelNorth == -1 && currentLevelWest == -4 && currentZone == "HauntedForest") {
+			hauntedZoneMinusOneMinusFour();
+			playMusic();
+		}
 		if (currentLevelNorth == -2 && currentLevelWest == 1 && currentZone == "Forest") {
 			forestZoneMinusTwoOne();
 		}
 		if (currentLevelNorth == -2 && currentLevelWest == 2 && currentZone == "Forest") {
 			forestZoneMinusTwoTwo();
 		}
+		if (currentLevelNorth == -2 && currentLevelWest == 0 && currentZone == "Forest") {
+			forestZoneMinusTwoZero();
+		}
+		if (currentLevelNorth == -2 && currentLevelWest == -1 && currentZone == "Forest") {
+			forestZoneMinusTwoMinusOne();
+		}
+		if (currentLevelNorth == -2 && currentLevelWest == -2 && currentZone == "Forest") {
+			forestZoneMinusTwoMinusTwo();
+		}
+		if (currentLevelNorth == -2 && currentLevelWest == -3 && currentZone == "Forest") {
+			forestZoneMinusTwoMinusThree();
+			playMusic();
+		}
+		if (currentLevelNorth == -2 && currentLevelWest == -4 && currentZone == "Forest") {
+			forestZoneMinusTwoMinusFour();
+			playMusic();
+		}
+
 		if (currentLevelNorth == -3 && currentLevelWest == 1 && currentZone == "Forest") {
 			forestZoneMinusThreeOne();
 		}
 		if (currentLevelNorth == -3 && currentLevelWest == 2 && currentZone == "Forest") {
 			forestZoneMinusThreeTwo();
+		}
+		if (currentLevelNorth == -3 && currentLevelWest == 0 && currentZone == "Forest") {
+			forestZoneMinusThreeZero();
+		}
+		if (currentLevelNorth == -3 && currentLevelWest == -1 && currentZone == "Forest") {
+			forestZoneMinusThreeMinusOne();
+		}
+		if (currentLevelNorth == -3 && currentLevelWest == -2 && currentZone == "Forest") {
+			forestZoneMinusThreeMinusTwo();
+		}
+		if (currentLevelNorth == -3 && currentLevelWest == -3 && currentZone == "Forest") {
+			forestZoneMinusThreeMinusThree();
+		}
+		if (currentLevelNorth == -3 && currentLevelWest == -4 && currentZone == "Forest") {
+			forestZoneMinusThreeMinusFour();
 		}
 		if (currentLevelNorth == -4 && currentLevelWest == 1 && currentZone == "Forest") {
 			forestZoneMinusFourOne();
@@ -1193,6 +1228,11 @@ public class TheBigProject extends PApplet {
 				setPlayingMusic(false);
 				currentZone = "Desert";
 			}
+			if (currentLevelNorth == -1 && currentLevelWest == -3 && currentZone == "HauntedForest") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "Forest";
+			}
 			currentLevelWest++;
 			characterX = screenWidth;
 			clearEnemies();
@@ -1215,6 +1255,11 @@ public class TheBigProject extends PApplet {
 				setPlayingMusic(false);
 				currentZone = "HauntedForest";
 			}
+			if (currentLevelNorth == -1 && currentLevelWest == -2 && currentZone == "Forest") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "HauntedForest";
+			}
 			currentLevelWest--;
 			characterX = 0;
 			clearEnemies();
@@ -1232,6 +1277,16 @@ public class TheBigProject extends PApplet {
 				setPlayingMusic(false);
 				currentZone = "Forest";
 			}
+			if (currentLevelNorth == -2 && currentLevelWest == -3 && currentZone == "Forest") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "HauntedForest";
+			}
+			if (currentLevelNorth == -2 && currentLevelWest == -4 && currentZone == "Forest") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "HauntedForest";
+			}
 			currentLevelNorth++;
 			characterY = screenHeight;
 			clearEnemies();
@@ -1248,6 +1303,12 @@ public class TheBigProject extends PApplet {
 				resourceManager.soundFile.stop();
 				setPlayingMusic(false);
 				currentZone = "City";
+			}
+			if (currentLevelNorth == -1 && currentLevelWest == -3
+					|| currentLevelWest == -4 && currentZone == "HauntedForest") {
+				resourceManager.soundFile.stop();
+				setPlayingMusic(false);
+				currentZone = "Forest";
 			}
 			currentLevelNorth--;
 			characterY = 0;
@@ -1475,6 +1536,64 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	void forestZoneMinusOneMinusOne() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusOneMinusOne.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(950, 200);
+			createSecondKnight(800,600);
+			createFirstPaladin(350,150);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusOneMinusTwo() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusOneMinusTwo.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstPaladin(450,550);
+			createSecondPaladin(650,150);
+			setLoadedMap(true);
+		}
+	}
+
+	void hauntedZoneMinusOneMinusThree() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/HauntedForest/HauntedMinusOneMinusThree.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstHound(1000,150);
+			createSecondHound(500,150);
+			setLoadedMap(true);
+		}
+	}
+
+	void hauntedZoneMinusOneMinusFour() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/HauntedForest/HauntedMinusOneMinusFour.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstHound(1050,100);
+			createSecondHound(550, 250);
+			createThirdHound(250,550);
+			setLoadedMap(true);
+		}
+	}
+
 	void forestZoneMinusTwoOne() {
 		if (!isLoadedMap()) {
 			MapLoader loader = new MapLoader(this);
@@ -1487,6 +1606,84 @@ public class TheBigProject extends PApplet {
 			createSecondKnight(1200, 320);
 			createThirdKnight(100, 750);
 			createFirstPaladin(1050, 700);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusTwoZero() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusTwoZero.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(1150,100);
+			createSecondKnight(350,500);
+			createThirdKnight(250,200);
+			createFirstPaladin(600,800);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusTwoMinusOne() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusTwoMinusOne.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(500,750);
+			createSecondKnight(1200,250);
+			createFirstPaladin(250,300);
+			createSecondPaladin(650,200);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusTwoMinusTwo() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusTwoMinusTwo.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(350,300);
+			createSecondKnight(1000,100);
+			createFirstPaladin(900,750);
+			createSecondPaladin(250,700);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusTwoMinusThree() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusTwoMinusThree.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(800,800);
+			createFirstPaladin(250,500);
+			createSecondPaladin(800,100);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusTwoMinusFour() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusTwoMinusFour.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(350,300);
+			createSecondKnight(1100,500);
+			createFirstPaladin(200,650);
 			setLoadedMap(true);
 		}
 	}
@@ -1533,6 +1730,81 @@ public class TheBigProject extends PApplet {
 			createFirstKnight(650, 700);
 			createFirstPaladin(1150, 150);
 			createFirstPaladin(750, 350);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusThreeZero() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusThreeZero.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusThreeMinusOne() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusThreeMinusOne.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(350,200);
+			createFirstPaladin(350,650);
+			createSecondPaladin(1000,500);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusThreeMinusTwo() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusThreeMinusTwo.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(800,650);
+			createSecondKnight(1150,150);
+			createThirdKnight(200,150);
+			createFirstPaladin(550,300);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusThreeMinusThree() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusThreeMinusThree.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(150,600);
+			createFirstPaladin(350,250);
+			createSecondPaladin(1300,250);
+			createThirdPaladin(900,500);
+			setLoadedMap(true);
+		}
+	}
+
+	void forestZoneMinusThreeMinusFour() {
+		if (!isLoadedMap()) {
+			MapLoader loader = new MapLoader(this);
+			try {
+				objects = loader.loadTiles(baseFolder + "/ForestZones/ForestMinusThreeMinusFour.txt");
+			} catch (IOException e) {
+				println("Sorry, kon map niet laden: " + e.getMessage());
+			}
+			createFirstKnight(300,650);
+			createSecondKnight(1000,600);
+			createFirstPaladin(600,300);
+			createSecondPaladin(950,150);
 			setLoadedMap(true);
 		}
 	}
