@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.bruus.bigproject.friendlies.Friendly;
 import com.bruus.bigproject.enemies.EnemyHounds;
 import com.bruus.bigproject.enemies.EnemyLanceKnights;
 import com.bruus.bigproject.enemies.EnemyMedusas;
@@ -12,6 +11,7 @@ import com.bruus.bigproject.enemies.EnemyPaladins;
 import com.bruus.bigproject.enemies.EnemyScorpions;
 import com.bruus.bigproject.enemies.EnemySkeletons;
 import com.bruus.bigproject.enemies.RangedProjectiles;
+import com.bruus.bigproject.friendlies.Friendly;
 import com.bruus.bigproject.gameobjects.GameObject;
 import com.bruus.bigproject.loaders.MapLoader;
 import com.bruus.bigproject.loaders.ResourceManager;
@@ -101,6 +101,10 @@ public class TheBigProject extends PApplet {
 	public String currentZone = "Forest";
 	private boolean loadedMap;
 
+	// City Mayor
+	int mayorX = 450;
+	int mayorY = 250;
+
 	// Variables for Traders
 	public float oldManX = 900;
 	public float oldManY = 300;
@@ -140,7 +144,9 @@ public class TheBigProject extends PApplet {
 	public boolean loadElements = false;
 	public boolean initialized = false;
 	public boolean action = false;
+	boolean dash = false;
 	boolean leveledUp = true;
+	int timeUntilDash = 0;
 
 	// Variables for the sound
 	private boolean playingMusic = false;
@@ -193,6 +199,8 @@ public class TheBigProject extends PApplet {
 	int chatBoxX = 50;
 	int chatBoxY = 600;
 	int chatYStart = chatBoxY + 50;
+	boolean extraChat = false;
+	String extraOption = "";
 
 	// Variables for images on screen
 	public float swordX = 400;
@@ -279,14 +287,7 @@ public class TheBigProject extends PApplet {
 
 	public void setup() {
 		imageMode(CENTER);
-		allKnights = new ArrayList<>();
-		allPaladins = new ArrayList<>();
-		allSkeletons = new ArrayList<>();
-		allHounds = new ArrayList<>();
-		allMedusas = new ArrayList<>();
-		allScorpions = new ArrayList<>();
-		allFriendlies = new ArrayList<>();
-		allProjectiles = new ArrayList<>();
+		clearEnemies();
 		psionicFont = createFont("Georgia", 20);
 		textFont = createFont("Georgia", 12);
 
@@ -351,7 +352,7 @@ public class TheBigProject extends PApplet {
 				setPlayingMusic(true);
 				resourceManager.soundFile.amp(0.5f);
 			}
-			resourceManager.soundFile.loop();
+			// resourceManager.soundFile.loop();
 		}
 	}
 
@@ -375,11 +376,10 @@ public class TheBigProject extends PApplet {
 			temp.displayProjectiles();
 		}
 
-		for (EnemyLanceKnights temp : allKnights) {
+		for (EnemyLanceKnights temp : getAllKnights()) {
 			temp.displayKnights();
 			temp.bowDamage(bowDamage);
 			if (swordAttack == true && damageAt < millis()) {
-				println(attackDirection, areaImpact, swordDamage);
 				temp.swordDamage(attackDirection, areaImpact, swordDamage);
 			}
 			if (attackDoubleA == true && damageAt < millis()) {
@@ -443,34 +443,19 @@ public class TheBigProject extends PApplet {
 		}
 	}
 
+	private ArrayList<EnemyLanceKnights> getAllKnights() {
+		return allKnights;
+	}
+
 	void clearEnemies() {
-		if (allKnights.size() > 0) {
-			allKnights.clear();
-		}
-		if (allPaladins.size() > 0) {
-			allPaladins.clear();
-		}
-
-		if (allSkeletons.size() > 0) {
-			allSkeletons.clear();
-		}
-		if (allHounds.size() > 0) {
-			allHounds.clear();
-		}
-
-		if (allMedusas.size() > 0) {
-			allMedusas.clear();
-		}
-		if (allProjectiles.size() > 0) {
-			allProjectiles.clear();
-		}
-		if (allScorpions.size() > 0) {
-			allScorpions.clear();
-		}
-		if (allFriendlies.size() > 0) {
-			allFriendlies.clear();
-		}
-
+		allKnights = new ArrayList<>();
+		allPaladins = new ArrayList<>();
+		allSkeletons = new ArrayList<>();
+		allHounds = new ArrayList<>();
+		allMedusas = new ArrayList<>();
+		allScorpions = new ArrayList<>();
+		allFriendlies = new ArrayList<>();
+		allProjectiles = new ArrayList<>();
 	}
 
 	// PosX, PosY, Direction, Life, MaxLife, MovementSpeed, maxPsionicEssence,
@@ -545,28 +530,32 @@ public class TheBigProject extends PApplet {
 		EnemyLanceKnights Knight = new EnemyLanceKnights(this, knightPosX, knightPosY, "Right", lanceKnightHealth,
 				lanceKnightHealth, 2, psionicEssenceDropKnight, 0, lanceKnightExp, dropLoot, true, false, false, true,
 				"", resourceManager.lanceKnightRightIdle);
-		allKnights.add(Knight);
+		addKnight(Knight);
+	}
+
+	private boolean addKnight(EnemyLanceKnights Knight) {
+		return getAllKnights().add(Knight);
 	}
 
 	void createSecondKnight(float knightPosX, float knightPosY) {
 		EnemyLanceKnights Knight = new EnemyLanceKnights(this, knightPosX, knightPosY, "Right", lanceKnightHealth,
 				lanceKnightHealth, 2, psionicEssenceDropKnight, 0, lanceKnightExp, dropLoot, true, false, false, true,
 				"", resourceManager.lanceKnightRightIdle);
-		allKnights.add(Knight);
+		addKnight(Knight);
 	}
 
 	void createThirdKnight(float knightPosX, float knightPosY) {
 		EnemyLanceKnights Knight = new EnemyLanceKnights(this, knightPosX, knightPosY, "Right", lanceKnightHealth,
 				lanceKnightHealth, 2, psionicEssenceDropKnight, 0, lanceKnightExp, dropLoot, true, false, false, true,
 				"", resourceManager.lanceKnightRightIdle);
-		allKnights.add(Knight);
+		addKnight(Knight);
 	}
 
 	void createFourthKnight(float knightPosX, float knightPosY) {
 		EnemyLanceKnights Knight = new EnemyLanceKnights(this, knightPosX, knightPosY, "Right", lanceKnightHealth,
 				lanceKnightHealth, 2, psionicEssenceDropKnight, 0, lanceKnightExp, dropLoot, true, false, false, true,
 				"", resourceManager.lanceKnightRightIdle);
-		allKnights.add(Knight);
+		addKnight(Knight);
 	}
 
 	void createFirstPaladin(float paladinPosX, float paladinPosY) {
@@ -820,25 +809,42 @@ public class TheBigProject extends PApplet {
 		characterXTile = characterX / 50;
 		characterYTile = characterY / 50;
 		if (standingStill == false && swordAttack == false && bowAttack == false && swordRangeCombo == false) {
-			if (walkingDirection == "left" && resourceManager.currentAnimation != resourceManager.walkingLeft) {
-				resourceManager.currentAnimation.stop();
-				resourceManager.currentAnimation = resourceManager.walkingLeft;
-			}
-			if (walkingDirection == "right" && resourceManager.currentAnimation != resourceManager.walkingRight) {
-				resourceManager.currentAnimation.stop();
-				resourceManager.currentAnimation = resourceManager.walkingRight;
-			}
-			if (walkingDirection == "up" || walkingDirection == "down") {
-				if (prevWalkingDirection == "left" && resourceManager.currentAnimation != resourceManager.walkingLeft) {
+			if (dash == false) {
+				if (walkingDirection == "left" && resourceManager.currentAnimation != resourceManager.walkingLeft) {
 					resourceManager.currentAnimation.stop();
 					resourceManager.currentAnimation = resourceManager.walkingLeft;
 				}
-				if (prevWalkingDirection == "right"
-						&& resourceManager.currentAnimation != resourceManager.walkingRight) {
+				if (walkingDirection == "right" && resourceManager.currentAnimation != resourceManager.walkingRight) {
 					resourceManager.currentAnimation.stop();
 					resourceManager.currentAnimation = resourceManager.walkingRight;
 				}
+				if (walkingDirection == "up" || walkingDirection == "down") {
+					if (prevWalkingDirection == "left"
+							&& resourceManager.currentAnimation != resourceManager.walkingLeft) {
+						resourceManager.currentAnimation.stop();
+						resourceManager.currentAnimation = resourceManager.walkingLeft;
+					}
+					if (prevWalkingDirection == "right"
+							&& resourceManager.currentAnimation != resourceManager.walkingRight) {
+						resourceManager.currentAnimation.stop();
+						resourceManager.currentAnimation = resourceManager.walkingRight;
+					}
+				}
 			}
+
+			if (dash == true) {
+				if (prevWalkingDirection == "left") {
+					resourceManager.currentAnimation.stop();
+					resourceManager.currentAnimation = resourceManager.saberDashLeft;
+					println("Hey");
+				}
+				if (prevWalkingDirection == "right") {
+					resourceManager.currentAnimation.stop();
+					resourceManager.currentAnimation = resourceManager.saberDashRight;
+					println("Hey");
+				}
+			}
+
 		}
 		if (walkUntil < millis() && swordAttack == false) {
 			standingStill = true;
@@ -919,19 +925,20 @@ public class TheBigProject extends PApplet {
 	void bowAttack() {
 		int bowAttackDirectionLeft = 60;
 		int bowAttackDirectionRight = 40;
-		if (arrowRangeCombo == true && millis() > attackUntil - 1000) {
+		if (arrowRangeCombo == true && millis() > attackUntil - 1500) {
 			arrowToFar = false;
 		}
-
+		if (bowAttack == true && millis() > attackUntil - 500) {
+			arrowToFar = false;
+		}
 		if (arrowDirection == "right" && arrowToFar == false) {
 			resourceManager.projectileSaber = resourceManager.projectileRight;
 			arrowX += 10 + windSpeed;
 		}
 		if (arrowDirection == "left" && arrowToFar == false) {
-			arrowX -= 10 + windSpeed;
 			resourceManager.projectileSaber = resourceManager.projectileLeft;
+			arrowX -= 10 + windSpeed;
 		}
-
 		if (bowAttack == true || swordRangeCombo == true) {
 			arrowY = characterY;
 			if (walkingDirection == "left" && resourceManager.currentAnimation != resourceManager.attackBowLeft
@@ -953,9 +960,13 @@ public class TheBigProject extends PApplet {
 				}
 			}
 		}
-		if (arrowX < oldCharacterX - 500 || arrowX > oldCharacterX + 500) {
+		if (arrowX < oldCharacterX - 500 && arrowToFar == false) {
 			arrowToFar = true;
 		}
+		if (arrowX > oldCharacterX + 500 && arrowToFar == false) {
+			arrowToFar = true;
+		}
+
 		if (arrowToFar == false) {
 			image(resourceManager.projectileSaber, arrowX, arrowY);
 		}
@@ -1004,13 +1015,16 @@ public class TheBigProject extends PApplet {
 	}
 
 	void keepCounting() {
-		if (attackUntil < millis()) {
+		if (attackUntil < millis() || dash == true) {
 			swordAttack = false;
 			bowAttack = false;
 			ableToAttack = true;
 			attackDoubleA = false;
 			swordRangeCombo = false;
 			arrowRangeCombo = false;
+			if (timeUntilDash < millis()) {
+				dash = false;
+			}
 		}
 	}
 
@@ -1362,7 +1376,7 @@ public class TheBigProject extends PApplet {
 			createFirstMan(450, 200);
 			createFirstWoman(850, 350);
 			createFirstBoy(1000, 250);
-			createSecondBoy(1200, 350);
+			createFirstBoy(1200, 350);
 			setLoadedMap(true);
 		}
 		image(resourceManager.cityHouseLarge, 275, 150);
@@ -1420,6 +1434,7 @@ public class TheBigProject extends PApplet {
 			createSecondMan(700, 600);
 			setLoadedMap(true);
 		}
+		cityMayor(mayorX, mayorY);
 		image(resourceManager.cityHouseOne, 625, 175);
 		image(resourceManager.cityHouseTwo, 825, 175);
 		image(resourceManager.cityHouseLarge, 325, 450);
@@ -1545,8 +1560,8 @@ public class TheBigProject extends PApplet {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
 			createFirstKnight(950, 200);
-			createSecondKnight(800,600);
-			createFirstPaladin(350,150);
+			createSecondKnight(800, 600);
+			createFirstPaladin(350, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1559,8 +1574,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstPaladin(450,550);
-			createSecondPaladin(650,150);
+			createFirstPaladin(450, 550);
+			createSecondPaladin(650, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1573,8 +1588,8 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstHound(1000,150);
-			createSecondHound(500,150);
+			createFirstHound(1000, 150);
+			createSecondHound(500, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -1587,9 +1602,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstHound(1050,100);
+			createFirstHound(1050, 100);
 			createSecondHound(550, 250);
-			createThirdHound(250,550);
+			createThirdHound(250, 550);
 			setLoadedMap(true);
 		}
 	}
@@ -1618,10 +1633,10 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(1150,100);
-			createSecondKnight(350,500);
-			createThirdKnight(250,200);
-			createFirstPaladin(600,800);
+			createFirstKnight(1150, 100);
+			createSecondKnight(350, 500);
+			createThirdKnight(250, 200);
+			createFirstPaladin(600, 800);
 			setLoadedMap(true);
 		}
 	}
@@ -1634,10 +1649,10 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(500,750);
-			createSecondKnight(1200,250);
-			createFirstPaladin(250,300);
-			createSecondPaladin(650,200);
+			createFirstKnight(500, 750);
+			createSecondKnight(1200, 250);
+			createFirstPaladin(250, 300);
+			createSecondPaladin(650, 200);
 			setLoadedMap(true);
 		}
 	}
@@ -1650,10 +1665,10 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(350,300);
-			createSecondKnight(1000,100);
-			createFirstPaladin(900,750);
-			createSecondPaladin(250,700);
+			createFirstKnight(350, 300);
+			createSecondKnight(1000, 100);
+			createFirstPaladin(900, 750);
+			createSecondPaladin(250, 700);
 			setLoadedMap(true);
 		}
 	}
@@ -1666,9 +1681,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(800,800);
-			createFirstPaladin(250,500);
-			createSecondPaladin(800,100);
+			createFirstKnight(800, 800);
+			createFirstPaladin(250, 500);
+			createSecondPaladin(800, 100);
 			setLoadedMap(true);
 		}
 	}
@@ -1681,9 +1696,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(350,300);
-			createSecondKnight(1100,500);
-			createFirstPaladin(200,650);
+			createFirstKnight(350, 300);
+			createSecondKnight(1100, 500);
+			createFirstPaladin(200, 650);
 			setLoadedMap(true);
 		}
 	}
@@ -1754,9 +1769,9 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(350,200);
-			createFirstPaladin(350,650);
-			createSecondPaladin(1000,500);
+			createFirstKnight(350, 200);
+			createFirstPaladin(350, 650);
+			createSecondPaladin(1000, 500);
 			setLoadedMap(true);
 		}
 	}
@@ -1769,10 +1784,10 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(800,650);
-			createSecondKnight(1150,150);
-			createThirdKnight(200,150);
-			createFirstPaladin(550,300);
+			createFirstKnight(800, 650);
+			createSecondKnight(1150, 150);
+			createThirdKnight(200, 150);
+			createFirstPaladin(550, 300);
 			setLoadedMap(true);
 		}
 	}
@@ -1785,10 +1800,10 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(150,600);
-			createFirstPaladin(350,250);
-			createSecondPaladin(1300,250);
-			createThirdPaladin(900,500);
+			createFirstKnight(150, 600);
+			createFirstPaladin(350, 250);
+			createSecondPaladin(1300, 250);
+			createThirdPaladin(900, 500);
 			setLoadedMap(true);
 		}
 	}
@@ -1801,10 +1816,10 @@ public class TheBigProject extends PApplet {
 			} catch (IOException e) {
 				println("Sorry, kon map niet laden: " + e.getMessage());
 			}
-			createFirstKnight(300,650);
-			createSecondKnight(1000,600);
-			createFirstPaladin(600,300);
-			createSecondPaladin(950,150);
+			createFirstKnight(300, 650);
+			createSecondKnight(1000, 600);
+			createFirstPaladin(600, 300);
+			createSecondPaladin(950, 150);
 			setLoadedMap(true);
 		}
 	}
@@ -3050,7 +3065,7 @@ public class TheBigProject extends PApplet {
 	// Blacksmith
 	void blackSmith() {
 		if (characterX / 50 == 11 && characterY / 50 == 7 && action == true) {
-			chatBox();
+			chatBox("Blacksmith");
 			textChat("Blacksmith");
 
 			if (openShop == true) {
@@ -3245,9 +3260,22 @@ public class TheBigProject extends PApplet {
 			if (openShop == true && currentZone.equals("CityShop")) {
 				loadInventory = true;
 			} else {
-				chatBox();
+				chatBox("OldMan");
 				textChat("OldMan");
 			}
+		}
+	}
+
+	void cityMayor(int posX, int posY) {
+		resourceManager.mayorAnimation.play();
+		image(resourceManager.mayorAnimation, posX, posY);
+
+		if (dist(characterX, characterY, posX, posY) < 200 && action == true) {
+			resourceManager.mayorAnimation = resourceManager.mayorTalk;
+			chatBox("CityMayor");
+			textChat("CityMayor");
+		} else {
+			resourceManager.mayorAnimation = resourceManager.mayorSpin;
 		}
 	}
 
@@ -3271,13 +3299,7 @@ public class TheBigProject extends PApplet {
 	void textChat(String person) {
 		textFont(textFont);
 		String currentText = "Hey there, if you are reading this, then the code has fucked up \nand whatever I wanted to say isn't actually going to be said. \nYou managed to break the game! Congratulations and fuck you!";
-		String blackSmithText = "Hey there, if you are reading this, then the code has fucked up \nand whatever I wanted to say isn't actually going to be said. \nYou managed to break the game! Congratulations and fuck you!";
-		if (person == "OldMan") {
-			currentText = allTexts(currentText, person);
-		}
-		if (person == "Blacksmith") {
-			currentText = allTexts(blackSmithText, person);
-		}
+		currentText = allTexts(currentText, person);
 		textAlign(CORNER);
 		fill(255);
 		text(currentText, chatBoxX + 10, chatYStart);
@@ -3324,18 +3346,33 @@ public class TheBigProject extends PApplet {
 		}
 
 		if (person == "Blacksmith") {
-
 			String[] smithText = {
 					"Hey there stranger, what brings you to these parts? \nI doubt it's the weather or beautiful surroundings. Because there are skeletons and snakes \nthrowing purple shit everywhere. \nI have been living here for a while now, this place used to be similar to the forest over yonder. \nBut alas, the fools of the Ajimeri Empire dabbled with forces beyond their comprehension, \nand the sundering ruined this land.",
 					"But I don't really care though, all I care about is hitting metal to make it dangerous. \nSo if you want your weapons upgraded, or wish to purchase weapons \njust bring the materials and enough essence and I'm your guy." };
 			maxText = smithText.length - 1;
 			textMessage = smithText[currentText];
 		}
+
+		if (person.equals("CityMayor")) {
+			String[] mayorText = {
+					"Why hello there cutie! I am the mayor of this town!. \nWhat can I do for you? \nJust kidding I'm lazy so I'm not going to do anything, if you want to do stuff ask around for people to do it. Heehee" };
+
+			String[] mayorQuestText = {
+					"Say, you seem like you can handle yourself. \nWould you mind killing some of those pesky Lance Knights and Paladins in the forest? \nThey have been sending me letters telling me to pay them. \nClearing my mailbox has never been so annoying, would you kindly as them to stop?" };
+			if (currentTextSetting == "MayorIntro") {
+				maxText = mayorText.length - 1;
+			}
+
+			if (currentTextSetting == "MayorQuest") {
+				maxText = mayorQuestText.length - 1;
+				textMessage = mayorQuestText[currentText];
+			}
+		}
 		return textMessage;
 
 	}
 
-	void chatBox() {
+	void chatBox(String person) {
 		fill(60);
 		rectMode(CORNER);
 		rect(chatBoxX, chatBoxY, 500, 200);
@@ -3343,14 +3380,31 @@ public class TheBigProject extends PApplet {
 		fill(255);
 		rect(nextChatX, nextChatY, 50, 50);
 		rect(prevChatX, nextChatY, 50, 50);
-		rect(extraChatX, nextChatY, 50, 50);
 		rect(shopChatX, nextChatY, 50, 50);
 		fill(0);
 		textFont(textFont);
 		text("Shop", shopChatX - 10, nextChatY);
 		text("Next", nextChatX - 10, nextChatY);
 		text("Previous", prevChatX - 23, nextChatY);
-		text("Extra", extraChatX - 10, nextChatY);
+
+		if (person.equals("CityMayor")) {
+			extraChat = true;
+			extraOption = "Quest";
+		}
+		if (person.equals("OldMan")) {
+			extraChat = true;
+			extraOption = "Extra";
+		}
+		if (person.equals("Blacksmith")) {
+			extraChat = false;
+		}
+
+		if (extraChat == true) {
+			fill(255);
+			rect(extraChatX, nextChatY, 50, 50);
+			fill(0);
+			text(extraOption, extraChatX - 10, nextChatY);
+		}
 
 	}
 
@@ -3358,97 +3412,58 @@ public class TheBigProject extends PApplet {
 	// Keypressed, responsible for multiple actions
 
 	public void keyPressed() {
-		int newX = characterX;
-		int newY = characterY;
-		if (key == 'm') {
+
+		switch (key) {
+		case 'm':
 			System.out.println("currentLevelNorth = " + currentLevelNorth);
 			System.out.println("currentLevelWest = " + currentLevelWest);
+			break;
+		case 'a':
+			handleAttack();
+			break;
+		case 'd':
+			handleTangedAttack();
+			break;
+		case 'c':
+			toggleElements();
+			break;
+		case 'b':
+			toggleInventory();
+			break;
+		case 'v':
+			toggleWeapons();
+			break;
+		case 'x':
+			toggleAction();
+			break;
+		case ' ':
+			evade();
+			break;
+		default:
+			moveAround();
 		}
+	}
 
-		if (key == 'a') {
-			if (action == false && swordAttack == true && standingStill == false && ableToAttack == false
-					&& millis() < timeUntilCombo && attackDoubleA == false) {
-				attackDoubleA = true;
-				attackUntil = millis() + attackSpeed * 2 - 400;
-				damageAt = millis() + 2500;
-			}
-			if (ableToAttack == true) {
-				action = false;
-				swordAttack = true;
-				standingStill = false;
-				ableToAttack = false;
-				attackUntil = millis() + attackSpeed;
-				damageAt = millis() + 2000;
-				timeUntilCombo = millis() + timeForCombo;
-			}
-		}
+	private void handleTangedAttack() {
+		if (rangedCombo())
+			startSwordRangedAttack();
+		if (throwingProjectile())
+			startRangedAttack();
+	}
 
-		if (key == 'd') {
-			if (ableToAttack == false && swordAttack == true && swordRangeCombo == false && millis() < timeUntilCombo) {
-				oldCharacterX = characterX;
-				oldCharacterY = characterY;
-				swordRangeCombo = true;
-				swordAttack = false;
-				attackUntil = millis() + attackSpeed + 1000;
-				if (arrowToFar == true) {
-					arrowRangeCombo = true;
-				}
-			}
-			if (ableToAttack == true && swordRangeCombo == false && swordAttack == false) {
-				action = false;
-				ableToAttack = false;
-				bowAttack = true;
-				standingStill = false;
-				oldCharacterX = characterX;
-				oldCharacterY = characterY;
-				attackUntil = millis() + 1000;
-				if (arrowToFar == true) {
-					arrowToFar = false;
-				}
-			}
-		}
-		if (key == 'c') {
-			action = false;
-			if (loadElements == true) {
-				loadElements = false;
-			} else if (loadElements == false) {
-				loadElements = true;
-				loadWeapons = false;
-				loadInventory = false;
-			}
-		}
+	private void handleAttack() {
+		if (doingNothing())
+			startDoubleAttack();
+		if (ableToAttack)
+			startAttack();
+	}
 
-		if (key == 'i') {
-			action = false;
-			if (loadInventory == true) {
-				loadInventory = false;
-			} else if (loadInventory == false) {
-				loadInventory = true;
-				loadElements = false;
-				loadWeapons = false;
-			}
-		}
+	private void moveAround() {
 
-		if (key == 'v') {
-			action = false;
-			if (loadWeapons == true) {
-				loadWeapons = false;
-				loadInventory = false;
-			} else if (loadWeapons == false) {
-				loadWeapons = true;
-				loadElements = false;
-				loadInventory = false;
-			}
-		}
+		int newX = characterX;
+		int newY = characterY;
 
-		if (key == 'x') {
-			if (action != true) {
-				action = true;
-			} else if (action == true) {
-				action = false;
-			}
-		}
-
+		boolean validTile = true;
 		if (key == CODED) {
 			if (swordAttack == false && bowAttack == false) {
 				if (keyCode == UP) {
@@ -3484,7 +3499,6 @@ public class TheBigProject extends PApplet {
 			}
 
 			ArrayList<TileOverlap> steppedOn = determineSteppedOn(newX, newY);
-			boolean validTile = true;
 			for (TileOverlap overlap : steppedOn) {
 				if (overlap.getSurface() > 0) {
 					if (overlap.getType() == 'W' || overlap.getType() == 'T' || overlap.getType() == 'a'
@@ -3493,13 +3507,136 @@ public class TheBigProject extends PApplet {
 							|| overlap.getType() == 'L') {
 						validTile = false;
 					}
+
 				}
 			}
-			if (validTile) {
-				characterX = newX;
-				characterY = newY;
+		}
+		if (validTile) {
+			characterX = newX;
+			characterY = newY;
+		}
+	}
+
+	private void evade() {
+		if (isAttacking()) {
+			walkUntil = millis() + 1000;
+			dash = true;
+			attackUntil = 0;
+			timeUntilDash = millis() + 500;
+			if (walkingDirection.equals("up")) {
+				// newY += 50;
+				walkingDirection = "up";
+			}
+			if (walkingDirection.equals("down")) {
+				// newY -= 50;
+				walkingDirection = "down";
+			}
+			if (walkingDirection.equals("left")) {
+				// newX += 50;
+				walkingDirection = "left";
+				prevWalkingDirection = "left";
+			}
+			if (walkingDirection.equals("right")) {
+				// newX -= 50;
+				walkingDirection = "right";
+				prevWalkingDirection = "right";
 			}
 		}
+	}
+
+	private boolean isAttacking() {
+		return swordAttack == true || bowAttack == true || attackDoubleA == true || swordRangeCombo == true;
+	}
+
+	private void toggleAction() {
+
+		action = !action;
+
+	}
+
+	private void toggleWeapons() {
+
+		loadWeapons = !loadWeapons;
+		action = false;
+
+		if (loadWeapons) {
+			loadElements = false;
+			loadInventory = false;
+		}
+	}
+
+	private void toggleInventory() {
+		action = false;
+		if (loadInventory) {
+			loadInventory = false;
+		} else {
+			loadInventory = true;
+			loadElements = false;
+			loadWeapons = false;
+		}
+	}
+
+	private void toggleElements() {
+		action = false;
+		if (loadElements) {
+			loadElements = false;
+		} else {
+			loadElements = true;
+			loadWeapons = false;
+			loadInventory = false;
+		}
+	}
+
+	private void startRangedAttack() {
+		action = false;
+		ableToAttack = false;
+		bowAttack = true;
+		standingStill = false;
+		oldCharacterX = characterX;
+		oldCharacterY = characterY;
+		arrowX = oldCharacterX;
+		arrowY = oldCharacterY;
+		attackUntil = millis() + 1000;
+	}
+
+	private void startSwordRangedAttack() {
+		oldCharacterX = characterX;
+		oldCharacterY = characterY;
+		swordRangeCombo = true;
+		swordAttack = false;
+		attackUntil = millis() + attackSpeed + 1500;
+		if (arrowToFar == true) {
+			arrowRangeCombo = true;
+		}
+	}
+
+	private void startAttack() {
+		action = false;
+		swordAttack = true;
+		standingStill = false;
+		ableToAttack = false;
+		attackUntil = millis() + attackSpeed;
+		damageAt = millis() + 2000;
+		timeUntilCombo = millis() + timeForCombo;
+	}
+
+	private void startDoubleAttack() {
+		attackDoubleA = true;
+		attackUntil = millis() + attackSpeed * 2 - 400;
+		damageAt = millis() + 2500;
+	}
+
+	private boolean throwingProjectile() {
+		return ableToAttack == true && swordRangeCombo == false && swordAttack == false && bowAttack == false;
+	}
+
+	private boolean rangedCombo() {
+		return ableToAttack == false && swordAttack == true && swordRangeCombo == false && millis() < timeUntilCombo;
+	}
+
+	private boolean doingNothing() {
+		return action == false && swordAttack == true && standingStill == false && ableToAttack == false
+				&& millis() < timeUntilCombo && attackDoubleA == false;
 	}
 
 	// ---------------------------------------------------------------------------------------------------\\

@@ -11,7 +11,7 @@ public class ResourceManager {
 	public SoundFile hauntedForestMusic, desertMusic, forestMusic, squareMusic, traderHouseMusic, cityMusic, soundFile;
 	public Gif currentAnimation, walkingRight, walkingLeft, lookingLeft, lookingRight, lookingUp, lookingDown,
 			attackLeft, attackRight, attackBowLeft, attackBowRight, projectileRight, projectileLeft, projectileSaber;
-	public Gif saberDoubleALeft, saberDoubleARight, saberMeleeRangedLeft, saberMeleeRangedRight;
+	public Gif saberDoubleALeft, saberDoubleARight, saberMeleeRangedLeft, saberMeleeRangedRight, saberDashLeft, saberDashRight;
 
 	public Gif lanceKnightRightAnimation, lanceKnightLeftAnimation, lanceKnightRightAttack, lanceKnightRightIdle,
 			lanceKnightLeftIdle, lanceKnightLeftAttack;
@@ -35,6 +35,7 @@ public class ResourceManager {
 	public Gif girlIdleLeft, girlIdleRight, girlWalkLeft, girlWalkRight;
 	public Gif manIdleLeft, manIdleRight, manWalkLeft, manWalkRight;
 	public Gif womanIdleLeft, womanIdleRight, womanWalkLeft, womanWalkRight;
+	public Gif mayorSpin, mayorTalk, mayorAnimation;
 
 	/*
 	 * public PImage oldDudeImage, oldDudeLeft, oldDudeRight, oldDudeUp,
@@ -80,6 +81,9 @@ public class ResourceManager {
 		saberMeleeRangedRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberSwordRangedAttackRight.gif");
 		attackBowLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRangedAttackLeft.gif");
 		attackBowRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberRangedAttackRight.gif");
+		saberDashRight = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDashRight.gif");
+		saberDashLeft = new Gif(myApplet, baseFolder + "/Saber/SaberGifs/SaberDashLeft.gif");
+		
 
 		projectileRight = new Gif(myApplet, baseFolder + "/Loading_Images/SaberRangedRight.gif");
 		projectileLeft = new Gif(myApplet, baseFolder + "/Loading_Images/SaberRangedLeft.gif");
@@ -153,6 +157,11 @@ public class ResourceManager {
 		cityHouseLarge = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/House3.png");
 		cityShop = myApplet.loadImage(baseFolder + "/Loading_Images/CityTiles/Shop.png");
 
+		// City Mayor //
+		mayorSpin = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Mayor/MayorSpin.gif");
+		mayorTalk = new Gif(myApplet, baseFolder + "/Loading_Images/Citizens/Mayor/MayorTalking.gif");	
+		mayorAnimation = mayorSpin;
+		
 		// Old dude //
 		oldDudePurchase = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/oldDudePurchase.gif");
 		oldDudeIdleLeft = new Gif(myApplet, baseFolder + "/Loading_Images/OldDude/OldDudeIdleLeft.gif");
